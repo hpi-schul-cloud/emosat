@@ -23,6 +23,15 @@ h6 {
   line-height: 150%;
 }
 
+.hidden {
+  display: none;
+}
+
+.survey-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
 i.fa {
   color: #333;
 }

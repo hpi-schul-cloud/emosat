@@ -13,6 +13,15 @@ $(function() {
   });
 });
 
+function show_survey_table(show) {
+    if (show === true) {
+      $("#survey_area").removeClass("hidden");
+    }
+    else {
+      $("#survey_area").addClass("hidden");
+    }
+}
+
 function show_survey(show) {
   if (show) {
     $("#question_content").addClass("in-view");
@@ -22,6 +31,34 @@ function show_survey(show) {
   }
 }
 
+function add_survey_question(left_word, right_word, row_identifier) {
+  var table = $(".survey-table")
+  var new_answer = $(".survey-tr-prototype").clone();
+  row_identifier = row_identifier || "answer";
+  new_answer.removeClass("hidden");
+  new_answer.removeClass("survey-tr-prototype");
+  new_answer.addClass("survey-answer-option");
+  new_answer.find("input").attr("name", row_identifier)
+  new_answer.find(".word-left").html(left_word);
+  new_answer.find(".word-right").html(right_word);
+  table.append(new_answer);
+}
+
+function clear_survey() {
+  $(".survey-answer-option").remove();
+}
+
+function fill_survey(answer_source) {
+  clear_survey();
+  for (i in answer_source) {
+    var pair = answer_source[i];
+    add_survey_question(pair[0], pair[1], "question-" + i);
+  }
+}
+
+function fill_survey_partial(answer_source, count, offset) {
+  fill_survey(answer_source.slice(offset, offset+count));
+}
 
 function proceed_survey() {
   resize_survey_content(97, 50);
