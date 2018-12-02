@@ -1,0 +1,23 @@
+{
+  "name": "surveytool",
+  "version": "1.0.0",
+  "description": "Measuring LX",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schul-cloud/emosat.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/schul-cloud/emosat/issues"
+  },
+  "homepage": "https://github.com/schul-cloud/emosat#readme",
+  "dependencies": {
+    "command-line-args": "^5.0.2",
+    "express": "^4.16.4"
+  }
+}
