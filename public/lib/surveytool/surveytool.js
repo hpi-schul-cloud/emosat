@@ -49,6 +49,20 @@ function add_survey_question(left_word, right_word, row_identifier) {
   table.append(new_answer);
 }
 
+function publish_initial_sentiment(positive_sentiment) {
+  $.ajax({
+    url: "/initial_sentiment",
+    type: "POST",
+    data: JSON.stringify({ "sentiment": positive_sentiment ? "positive" : "negative" }),
+    contentType: "application/json; charset=utf-8",
+    processData: false,
+    dataType: "json",
+    success: function () {
+      console.log("Successfully sent initial sentiment to server");
+    }
+  });
+}
+
 function clear_survey() {
   $(".survey-answer-option").remove();
 }
@@ -87,19 +101,21 @@ function init_survey(div_name) {
   $("#" + div_name).html(survey_html_content());
 
   console.log("Init of survey tool");
-  $.get("/should_present_survey", function(data) {
+  $.getJSON("/should_present_survey", function (data) {
     if (data.present_survey) {
       setTimeout(function () {
         show_survey(true);
       }, data.timeout);
     }
-  } )
+  })
+
 
   $(".close-button").click(function () {
     show_survey(false);
   })
 
   $(".survey_reaction").click(function () {
+    publish_initial_sentiment($(this).hasClass("positive"));
     proceed_survey();
   });
 

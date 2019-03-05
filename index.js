@@ -23,6 +23,12 @@ app.get('/should_present_survey', function(req, res) {
 	res.json({"present_survey" : true, "timeout" : 1000});
 });
 
+app.post('/initial_sentiment', function(req, res, next) {
+  res.status(200);
+  res.json({sucess:true});
+	console.log("Initial sentiment" + " --> " + req.body.sentiment);
+});
+
 app.post('/survey_results', function(req, res, next) {
   res.status(200);
   res.json({sucess:true});
