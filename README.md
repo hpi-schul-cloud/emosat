@@ -19,4 +19,6 @@ In your web source file, create an empty div, for example add `<div id="my_surve
 <script src="lib/surveytool/surveytool.js"></script>
 ```
 
-In your JS code, call `init_survey("my_survey_div");`. Optionally, you can also provide a session/user id (depending on the use case): `init_survey("my_survey_div", "12345-000-42");`. If none is provided, a UUID is generated on the server side.
+In your JS code, call `init_survey({div_name: "my_survey_div"});`. Optionally, you can also provide a session/user id (depending on the use case): `init_survey({div_name: "my_survey_div", session_id: "0000-1234-5678"});`. If none is provided, a UUID is generated on the server side.
+
+If the survey server's request URL needs to be adapted, e.g. because it is running behind a reverse proxy, use `init_survey({div_name: "my_survey_div", server_prefix: "/surveytool"});`

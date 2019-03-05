@@ -1,4 +1,6 @@
 var survey_session_id = "";
+var server_prefix = "";
+
 function show_survey_table(show) {
   if (show === true) {
     $("#survey_area").removeClass("hidden");
@@ -9,7 +11,7 @@ function show_survey_table(show) {
 }
 
 function retrieve_session_id() {
-  $.getJSON("/session_id", function (data) {
+  $.getJSON(server_prefix + "/session_id", function (data) {
     if (data.session_id) {
       survey_session_id = data.session_id;
       determine_survey_need();
@@ -41,7 +43,7 @@ function add_survey_question(left_word, right_word, row_identifier) {
     var response = JSON.stringify({ "session_id": survey_session_id, question: question, answer: answer });
 
     $.ajax({
-      url: "/survey_results",
+      url: server_prefix + "/survey_results",
       type: "POST",
       data: response,
       contentType: "application/json; charset=utf-8",
@@ -64,7 +66,7 @@ function add_survey_question(left_word, right_word, row_identifier) {
 
 function publish_initial_sentiment(positive_sentiment) {
   $.ajax({
-    url: "/initial_sentiment",
+    url: server_prefix + "/initial_sentiment",
     type: "POST",
     data: JSON.stringify({ "session_id": survey_session_id, "sentiment": positive_sentiment ? "positive" : "negative" }),
     contentType: "application/json; charset=utf-8",
@@ -112,7 +114,7 @@ function content_stage_2() {
 
 function determine_survey_need() {
   console.log("Checking whether survey is needed");
-  $.getJSON("/should_present_survey?sid=" + survey_session_id, function (data) {
+  $.getJSON(server_prefix + "/should_present_survey?sid=" + survey_session_id, function (data) {
     if (data.present_survey) {
       setTimeout(function () {
         show_survey(true);
@@ -121,12 +123,14 @@ function determine_survey_need() {
   })
 }
 
-function init_survey(div_name, session_id) {
-  console.log("Init of survey tool for div " + div_name);
+function init_survey(options) {
+  console.log("Init of survey tool for div " + options.div_name);
 
-  $("#" + div_name).html(survey_html_content());
-  if (session_id) {
-    survey_session_id = session_id;
+  $("#" + options.div_name).html(survey_html_content());
+  server_prefix = options.server_prefix || "";
+  
+  if (options.session_id) {
+    survey_session_id = options.session_id;
     determine_survey_need();
   }
   else {
