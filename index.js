@@ -18,6 +18,11 @@ app.get('/questions', function(req, res) {
 	res.json(questions());
 });
 
+app.get('/should_present_survey', function(req, res) {
+  res.status(200);
+	res.json({"present_survey" : true, "timeout" : 1000});
+});
+
 app.post('/survey_results', function(req, res, next) {
   res.status(200);
   res.json({sucess:true});

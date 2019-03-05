@@ -87,9 +87,13 @@ function init_survey(div_name) {
   $("#" + div_name).html(survey_html_content());
 
   console.log("Init of survey tool");
-  setTimeout(function () {
-    show_survey(true);
-  }, 1000);
+  $.get("/should_present_survey", function(data) {
+    if (data.present_survey) {
+      setTimeout(function () {
+        show_survey(true);
+      }, data.timeout);
+    }
+  } )
 
   $(".close-button").click(function () {
     show_survey(false);
