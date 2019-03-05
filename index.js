@@ -15,24 +15,26 @@ const port = (options.port != undefined) ? options.port : 3000;
 
 app.get('/questions', function(req, res) {
   res.status(200);
+  console.log("(" + req.query.sid + ") Asking for questions");
 	res.json(questions());
 });
 
 app.get('/should_present_survey', function(req, res) {
   res.status(200);
+  console.log("(" + req.query.sid + ") Asking whether to present survey");
 	res.json({"present_survey" : true, "timeout" : 1000});
 });
 
 app.post('/initial_sentiment', function(req, res, next) {
   res.status(200);
   res.json({sucess:true});
-	console.log("Initial sentiment" + " --> " + req.body.sentiment);
+	console.log("(" + req.body.session_id + ") Initial sentiment" + " --> " + req.body.sentiment);
 });
 
 app.post('/survey_results', function(req, res, next) {
   res.status(200);
   res.json({sucess:true});
-	console.log(req.body.question + " --> " + req.body.answer);
+	console.log("(" + req.body.session_id + ") " + req.body.question + " --> " + req.body.answer);
 });
 
 // Serve static content from the public directory

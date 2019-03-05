@@ -1,3 +1,4 @@
+var survey_session_id = "";
 function show_survey_table(show) {
   if (show === true) {
     $("#survey_area").removeClass("hidden");
@@ -25,7 +26,7 @@ function add_survey_question(left_word, right_word, row_identifier) {
   new_answer.find("input").on("click", function (event) {
     var question = $(event.target).parents("tr").attr("question");
     var answer = $(event.target).attr("answer")
-    var response = JSON.stringify({ question: question, answer: answer });
+    var response = JSON.stringify({ "session_id": survey_session_id, question: question, answer: answer });
 
     $.ajax({
       url: "/survey_results",
@@ -53,7 +54,7 @@ function publish_initial_sentiment(positive_sentiment) {
   $.ajax({
     url: "/initial_sentiment",
     type: "POST",
-    data: JSON.stringify({ "sentiment": positive_sentiment ? "positive" : "negative" }),
+    data: JSON.stringify({ "session_id": survey_session_id, "sentiment": positive_sentiment ? "positive" : "negative" }),
     contentType: "application/json; charset=utf-8",
     processData: false,
     dataType: "json",
@@ -90,18 +91,19 @@ function resize_survey_content(width, height) {
 
 function content_stage_2() {
   $(".title").text("Please help us improve by rating us according to the following criteria.");
-  $.getJSON("/questions", function (data) {
+  $.getJSON("/questions?sid=" + survey_session_id, function (data) {
     fill_survey(data.pragmatic_quality);
     //fill_survey_partial(data.hedonic_quality, 3, 0);
     show_survey_table(true);
   });
 }
 
-function init_survey(div_name) {
+function init_survey(div_name, session_id) {
   $("#" + div_name).html(survey_html_content());
+  survey_session_id = session_id;
 
   console.log("Init of survey tool");
-  $.getJSON("/should_present_survey", function (data) {
+  $.getJSON("/should_present_survey?sid=" + survey_session_id, function (data) {
     if (data.present_survey) {
       setTimeout(function () {
         show_survey(true);
