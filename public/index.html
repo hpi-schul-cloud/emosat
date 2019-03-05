@@ -2,9 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" type="text/css" href="survey.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/surveytool/survey.css">
+    <script src="lib/surveytool/surveytool.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="index.css">
+
+    <script src="index.js"></script>
 
     <title>My Learning Portal</title>
   </head>
@@ -17,41 +22,8 @@
 <h2>In mattis mattis dui id gravida.</h2>
 <p>Sed hendrerit vitae nulla eget porta. Quisque urna neque, facilisis non blandit in, aliquam sed diam. Morbi tincidunt porttitor lorem, a laoreet ex sagittis ornare. Phasellus quis mauris consequat, hendrerit justo et, sagittis nunc. Sed sapien massa, dapibus vel imperdiet a, condimentum eget nibh. Proin auctor accumsan lectus, et gravida sapien condimentum quis. Morbi tempor, nulla vel tincidunt posuere, turpis odio dictum ligula, at pulvinar turpis quam vel odio. Integer ullamcorper augue in dolor congue sagittis. Morbi quis odio scelerisque, scelerisque dolor a, fringilla nisl. Fusce pharetra consequat fringilla. Duis luctus mollis quam, ut laoreet turpis ullamcorper ut. Phasellus quam orci, vulputate nec luctus non, pulvinar sit amet risus. Maecenas sed ligula interdum, consequat lectus vel, pretium orci. Sed turpis enim, sollicitudin sed egestas ac, aliquet vel augue. Phasellus quis auctor orci.</p>
 </div>
-    <!-- Load jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="surveytool.js"></script>
+    
+    <div id="my_survey_div"></div>
 
-    <div class="container cf">
-    <!-- Course 1 -->
-    <div id="question_content" class="animation-element bounce-up cf">
-      <div class="subject survey">
-        <div class="header-color"></div>
-        <div class="icon"><i class="fa fa-poll-h"></i></div>
-        <div class="close-button">
-          <i class="fa fa-times"></i>
-        </div>
-        <h3 class="title">How is your learning journey so far?
-          <div class="survey_reaction negative">👎</div>
-          <div class="survey_reaction positive">👍</div>
-        </h3>
-        <div class="content">
-          <div id="survey_area" class="hidden">
-            <table class="survey-table">
-              <tr class="survey-tr-prototype hidden">
-                <td><span class="word-left">left</span></td>
-                <td><input answer="1" type="radio"></td>
-                <td><input answer="2" type="radio"></td>
-                <td><input answer="3" type="radio"></td>
-                <td><input answer="4" type="radio"></td>
-                <td><input answer="5" type="radio"></td>
-                <td><span class="word-right">right</span></td>
-              </tr>
-            </table>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    </div>
   </body>
 </html>

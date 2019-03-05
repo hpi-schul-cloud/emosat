@@ -1,18 +1,3 @@
-$(function() {
-  console.log("test");
-    setTimeout(function() {
-      show_survey(true);
-    }, 1000);
-
-  $(".close-button").click(function() {
-      show_survey(false);
-  })
-
-  $(".survey_reaction").click(function() {
-    proceed_survey();
-  });
-});
-
 function show_survey_table(show) {
     if (show === true) {
       $("#survey_area").removeClass("hidden");
@@ -96,4 +81,57 @@ function content_stage_2() {
     //fill_survey_partial(data.hedonic_quality, 3, 0);
     show_survey_table(true);
   });
+}
+
+function init_survey(div_name) {
+  $("#" + div_name).html(survey_html_content());
+
+  console.log("Init of survey tool");
+      setTimeout(function() {
+        show_survey(true);
+      }, 1000);
+  
+    $(".close-button").click(function() {
+        show_survey(false);
+    })
+  
+    $(".survey_reaction").click(function() {
+      proceed_survey();
+    });
+
+}
+
+function survey_html_content() {
+  return `
+  <div class="surveytool-container cf">
+  <div id="question_content" class="animation-element bounce-up cf">
+    <div class="subject survey">
+      <div class="header-color"></div>
+      <div class="icon"><i class="fa fa-poll-h"></i></div>
+      <div class="close-button">
+        <i class="fa fa-times"></i>
+      </div>
+      <h3 class="title">How is your learning journey so far?
+        <div class="survey_reaction negative">👎</div>
+        <div class="survey_reaction positive">👍</div>
+      </h3>
+      <div class="content">
+        <div id="survey_area" class="hidden">
+          <table class="survey-table">
+            <tr class="survey-tr-prototype hidden">
+              <td><span class="word-left">left</span></td>
+              <td><input answer="1" type="radio"></td>
+              <td><input answer="2" type="radio"></td>
+              <td><input answer="3" type="radio"></td>
+              <td><input answer="4" type="radio"></td>
+              <td><input answer="5" type="radio"></td>
+              <td><span class="word-right">right</span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>`
 }

@@ -1,27 +1,4 @@
-/*These styles contain basic styles for fomatting along with our animation css*/
 
-body {
-  font-size: 16px;
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 400;
-  background: #efefef;
-  line-height: 170%;
-}
-
-strong,
-b {
-  font-weight: 600
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 300;
-  line-height: 150%;
-}
 
 .hidden {
   display: none;
@@ -62,12 +39,16 @@ i.fa {
   position: relative;
 }
 
-.container {
+.surveytool-container {
+  line-height: 170%;
   position: relative;
   padding: 25px;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
 }
 
-.container:last-of-type {
+.surveytool-container:last-of-type {
   padding-top: 0px;
 }
 /*animation element*/
