@@ -8,6 +8,18 @@ function show_survey_table(show) {
   }
 }
 
+function retrieve_session_id() {
+  $.getJSON("/session_id", function (data) {
+    if (data.session_id) {
+      survey_session_id = data.session_id;
+      determine_survey_need();
+    }
+    else {
+      console.log("Error while retrieving session ID");
+    }
+  })
+}
+
 function show_survey(show) {
   if (show) {
     $("#question_content").addClass("in-view");
@@ -98,11 +110,8 @@ function content_stage_2() {
   });
 }
 
-function init_survey(div_name, session_id) {
-  $("#" + div_name).html(survey_html_content());
-  survey_session_id = session_id;
-
-  console.log("Init of survey tool");
+function determine_survey_need() {
+  console.log("Checking whether survey is needed");
   $.getJSON("/should_present_survey?sid=" + survey_session_id, function (data) {
     if (data.present_survey) {
       setTimeout(function () {
@@ -110,7 +119,20 @@ function init_survey(div_name, session_id) {
       }, data.timeout);
     }
   })
+}
 
+function init_survey(div_name, session_id) {
+  console.log("Init of survey tool for div " + div_name);
+
+  $("#" + div_name).html(survey_html_content());
+  if (session_id) {
+    survey_session_id = session_id;
+    determine_survey_need();
+  }
+  else {
+    retrieve_session_id();
+    // Need for survey needs to be determined asynchronously
+  }
 
   $(".close-button").click(function () {
     show_survey(false);

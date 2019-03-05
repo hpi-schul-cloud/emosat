@@ -3,6 +3,7 @@ const questions = require('./questions').word_pairs;
 
 const bodyParser = require('body-parser')
 const app = express()
+const uuidv1 = require('uuid/v1');
 app.use(bodyParser.json())
 
 const optionDefinitions = [
@@ -12,6 +13,11 @@ const commandLineArgs = require('command-line-args')
 const options = commandLineArgs(optionDefinitions)
 
 const port = (options.port != undefined) ? options.port : 3000;
+
+app.get("/session_id", function(req, res) {
+  res.status(200);
+  res.json({session_id : uuidv1()});
+})
 
 app.get('/questions', function(req, res) {
   res.status(200);
