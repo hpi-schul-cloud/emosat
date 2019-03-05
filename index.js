@@ -18,6 +18,12 @@ app.get('/questions', function(req, res) {
 	res.json(questions());
 });
 
+app.post('/survey_results', function(req, res, next) {
+  res.status(200);
+  res.json({sucess:true});
+	console.log(req.body.question + " --> " + req.body.answer);
+});
+
 // Serve static content from the public directory
 app.use(express.static('public'))
 

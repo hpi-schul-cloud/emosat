@@ -36,6 +36,26 @@ function add_survey_question(left_word, right_word, row_identifier) {
   var new_answer = $(".survey-tr-prototype").clone();
   row_identifier = row_identifier || "answer";
   new_answer.removeClass("hidden");
+  new_answer.attr("question", left_word + "#" + right_word);
+  new_answer.find("input").on("click", function(event) {
+    var question = $(event.target).parents("tr").attr("question");
+    var answer = $(event.target).attr("answer")
+    var response = JSON.stringify({question: question, answer: answer});
+
+    $.ajax({
+      url:"/survey_results",
+      type:"POST",
+      data:response,
+      contentType:"application/json; charset=utf-8",
+      processData: false,
+      dataType:"json",
+      success: function(){
+        console.log("Successfully sent data to server");
+      }
+    });
+
+    console.log(question, answer);
+  })
   new_answer.removeClass("survey-tr-prototype");
   new_answer.addClass("survey-answer-option");
   new_answer.find("input").attr("name", row_identifier)
