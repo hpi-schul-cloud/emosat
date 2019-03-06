@@ -22,3 +22,8 @@ In your web source file, create an empty div, for example add `<div id="my_surve
 In your JS code, call `init_survey({div_name: "my_survey_div"});`. Optionally, you can also provide a session/user id (depending on the use case): `init_survey({div_name: "my_survey_div", session_id: "0000-1234-5678"});`. If none is provided, a UUID is generated on the server side.
 
 If the survey server's request URL needs to be adapted, e.g. because it is running behind a reverse proxy, use `init_survey({div_name: "my_survey_div", server_prefix: "/surveytool"});`
+
+## Endpoints for evaluation
+`/results/answers/json` and `/results/answers/csv` resturn the answers for the individual questions as JSON and respectively CSV. Same applies for `/results/sentiments/json` and `/results/sentiments/csv`, which contain the initial user sentiment.
+
+There might be several answers for a single questions and a single session ID, as the data is immediately transferred to the backend. If only the final result is of interes, all others can be ignored.
