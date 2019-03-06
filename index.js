@@ -1,6 +1,10 @@
 const express = require('express')
 const questions = require('./questions').word_pairs;
 
+const json2csv = require('json2csv').parse;
+const answer_fields = ['timestamp', 'session_id', 'option_left', 'option_right', 'value'];
+const sentiment_fields = ['timestamp', 'session_id', 'sentiment'];
+
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(':memory:');
 
@@ -59,7 +63,13 @@ function get_answers(callback) {
   answers = [];
   db.all("SELECT timestamp, session_id, option_left, option_right, value FROM response", function (err, rows) {
     for (var index in rows) {
-      answers.push([rows[index].timestamp, rows[index].session_id, rows[index].option_left, rows[index].option_right, rows[index].value,]);
+      answers.push({
+        timestamp: rows[index].timestamp,
+        session_id: rows[index].session_id,
+        option_left: rows[index].option_left,
+        option_right: rows[index].option_right,
+        value: rows[index].value
+      });
     }
     callback(answers);
   });
@@ -69,7 +79,11 @@ function get_sentiments(callback) {
   sentiments = [];
   db.all("SELECT timestamp, session_id, sentiment FROM sentiment", function (err, rows) {
     for (var index in rows) {
-      sentiments.push([rows[index].timestamp, rows[index].session_id, rows[index].sentiment]);
+      sentiments.push({
+        timestamp: rows[index].timestamp,
+        session_id: rows[index].session_id,
+        sentiment: rows[index].sentiment
+      });
     }
     callback(sentiments);
   });
@@ -82,11 +96,27 @@ app.get('/results/answers/json', function (req, res) {
   })
 });
 
+app.get('/results/answers/csv', function (req, res) {
+  get_answers(function (answers) {
+    var data = json2csv(answers, { fields: answer_fields })
+    res.attachment('answers.csv');
+    res.status(200).send(data);
+  })
+});
+
 app.get('/results/sentiments/json', function (req, res) {
   res.status(200);
   get_sentiments(function (sentiments) {
     res.json({ "sentiments": sentiments });
   });
+});
+
+app.get('/results/sentiments/csv', function (req, res) {
+  get_sentiments(function (sentiments) {
+    var data = json2csv(sentiments, { fields: sentiment_fields })
+    res.attachment('sentiments.csv');
+    res.status(200).send(data);
+  })
 });
 
 app.post('/survey_results', function (req, res, next) {
