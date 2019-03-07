@@ -119,6 +119,23 @@ app.get('/results/sentiments/csv', function (req, res) {
   })
 });
 
+function get_sentiment_session_ids(callback) {
+  session_ids = [];
+  db.all("SELECT DISTINCT session_id FROM sentiment", function (err, rows) {
+    for (var index in rows) {
+      session_ids.push(rows[index].session_id);
+    }
+    callback(session_ids);
+  });
+} 
+
+app.get('/results/sessions', function (req, res) {
+  res.status(200);
+  get_sentiment_session_ids(function (sessions_ids) {
+    res.json({ "sessions_ids": sessions_ids });
+  })
+});
+
 app.post('/survey_results', function (req, res, next) {
   res.status(200);
   res.json({ sucess: true });
