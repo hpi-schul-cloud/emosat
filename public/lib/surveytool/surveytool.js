@@ -1,5 +1,5 @@
-var survey_session_id = "";
 var server_prefix = "";
+var survey_options = {};
 
 function show_survey_table(show) {
   if (show === true) {
@@ -13,7 +13,7 @@ function show_survey_table(show) {
 function retrieve_session_id() {
   $.getJSON(server_prefix + "/session_id", function (data) {
     if (data.session_id) {
-      survey_session_id = data.session_id;
+      survey_options.session_id = data.session_id;
       determine_survey_need();
     }
     else {
@@ -40,7 +40,7 @@ function add_survey_question(left_word, right_word, row_identifier) {
   new_answer.find("input").on("click", function (event) {
     var question = $(event.target).parents("tr").attr("question");
     var answer = $(event.target).attr("answer")
-    var response = JSON.stringify({ "session_id": survey_session_id, question: question, answer: answer });
+    var response = JSON.stringify({ "session_id": survey_options.session_id, question: question, answer: answer });
 
     $.ajax({
       url: server_prefix + "/survey_results",
@@ -68,7 +68,7 @@ function publish_initial_sentiment(positive_sentiment) {
   $.ajax({
     url: server_prefix + "/initial_sentiment",
     type: "POST",
-    data: JSON.stringify({ "session_id": survey_session_id, "sentiment": positive_sentiment ? "positive" : "negative" }),
+    data: JSON.stringify({ "session_id": survey_options.session_id, "sentiment": positive_sentiment ? "positive" : "negative" }),
     contentType: "application/json; charset=utf-8",
     processData: false,
     dataType: "json",
@@ -105,16 +105,24 @@ function resize_survey_content(width, height) {
 
 function content_stage_2() {
   $(".title").text("Please help us improve by rating us according to the following criteria.");
-  $.getJSON("/questions?sid=" + survey_session_id, function (data) {
+  $.getJSON("/questions?" + get_sid_url_string() + get_role_url_string(), function (data) {
     fill_survey(data.pragmatic_quality);
     //fill_survey_partial(data.hedonic_quality, 3, 0);
     show_survey_table(true);
   });
 }
 
+function get_sid_url_string() {
+  return "sid=" + survey_options.session_id;
+}
+
+function get_role_url_string() {
+  return survey_options.role ? "&role=" + survey_options.role : "";
+}
+
 function determine_survey_need() {
   console.log("Checking whether survey is needed");
-  $.getJSON(server_prefix + "/should_present_survey?sid=" + survey_session_id, function (data) {
+  $.getJSON(server_prefix + "/should_present_survey?" + get_sid_url_string() + get_role_url_string(), function (data) {
     if (data.present_survey) {
       setTimeout(function () {
         show_survey(true);
@@ -124,13 +132,13 @@ function determine_survey_need() {
 }
 
 function init_survey(options) {
+  survey_options = options;
   console.log("Init of survey tool for div " + options.div_name);
 
   $("#" + options.div_name).html(survey_html_content());
   server_prefix = options.server_prefix || "";
-  
-  if (options.session_id) {
-    survey_session_id = options.session_id;
+
+  if (survey_options.session_id) {
     determine_survey_need();
   }
   else {
