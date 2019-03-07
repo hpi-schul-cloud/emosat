@@ -60,39 +60,29 @@ app.post('/initial_sentiment', function (req, res, next) {
   console.log("(" + req.body.session_id + ") Initial sentiment" + " --> " + req.body.sentiment);
 });
 
-function get_answers(callback) {
+function get_answers(callback, session_id) {
   answers = [];
-  db.all("SELECT timestamp, session_id, option_left, option_right, value FROM response", function (err, rows) {
-    for (var index in rows) {
-      answers.push({
-        timestamp: rows[index].timestamp,
-        session_id: rows[index].session_id,
-        option_left: rows[index].option_left,
-        option_right: rows[index].option_right,
-        value: rows[index].value
-      });
-    }
-    callback(answers);
+  var stmt = session_id !== undefined ?
+    db.prepare("SELECT timestamp, session_id, option_left, option_right, value FROM response WHERE session_id = ?") :
+    db.prepare("SELECT timestamp, session_id, option_left, option_right, value FROM response");
+  stmt.all(session_id, function (err, rows) {
+    callback(rows);
   });
 }
 
-function get_sentiments(callback) {
+function get_sentiments(callback, session_id) {
   sentiments = [];
-  db.all("SELECT timestamp, session_id, sentiment FROM sentiment", function (err, rows) {
-    for (var index in rows) {
-      sentiments.push({
-        timestamp: rows[index].timestamp,
-        session_id: rows[index].session_id,
-        sentiment: rows[index].sentiment
-      });
-    }
-    callback(sentiments);
+  var stmt = session_id !== undefined ?
+    db.prepare("SELECT timestamp, session_id, sentiment FROM sentiment WHERE session_id = ?") :
+    db.prepare("SELECT timestamp, session_id, sentiment FROM sentiment");
+  stmt.all(session_id, function (err, rows) {
+    callback(rows);
   });
 }
 
 app.get('/results/answers/:format', function (req, res) {
   var format = req.params.format;
-
+  var sid = req.query.sid || undefined
   get_answers(function (answers) {
     if (format == "json") {
       res.status(200);
@@ -107,12 +97,12 @@ app.get('/results/answers/:format', function (req, res) {
       res.status(404);
       res.json({ "error": "Type not supported." });
     }
-  })
+  }, sid)
 });
 
 app.get('/results/sentiments/:format', function (req, res) {
   var format = req.params.format;
-
+  var sid = req.query.sid || undefined;
   get_sentiments(function (sentiments) {
     if (format == "json") {
       res.status(200);
@@ -127,7 +117,7 @@ app.get('/results/sentiments/:format', function (req, res) {
       res.status(404);
       res.json({ "error": "Type not supported." });
     }
-  });
+  }, sid);
 });
 
 function get_sentiment_session_ids(callback) {
