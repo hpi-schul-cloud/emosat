@@ -6,7 +6,8 @@ const answer_fields = ['timestamp', 'session_id', 'option_left', 'option_right',
 const sentiment_fields = ['timestamp', 'session_id', 'sentiment'];
 
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(':memory:');
+//var db = new sqlite3.Database(':memory:');
+var db = new sqlite3.Database('survey.sqlite');
 
 const bodyParser = require('body-parser')
 const app = express()
@@ -23,8 +24,8 @@ const port = (options.port != undefined) ? options.port : 3000;
 
 function init_database() {
   db.serialize(function () {
-    db.run("CREATE TABLE sentiment (timestamp INTEGER, session_id TEXT, sentiment TEXT)");
-    db.run("CREATE TABLE response (timestamp INTEGER, session_id TEXT, option_left TEXT, option_right TEXT, value INTEGER)");
+    db.run("CREATE TABLE IF NOT EXISTS sentiment (timestamp INTEGER, session_id TEXT, sentiment TEXT)");
+    db.run("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id TEXT, option_left TEXT, option_right TEXT, value INTEGER)");
   });
 }
 
