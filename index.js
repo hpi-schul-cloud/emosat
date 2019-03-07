@@ -89,34 +89,44 @@ function get_sentiments(callback) {
   });
 }
 
-app.get('/results/answers/json', function (req, res) {
-  res.status(200);
+app.get('/results/answers/:format', function (req, res) {
+  var format = req.params.format;
+
   get_answers(function (answers) {
-    res.json({ "answers": answers });
+    if (format == "json") {
+      res.status(200);
+      res.json({ "answers": answers });
+    }
+    else if (format == "csv") {
+      var data = json2csv(answers, { fields: answer_fields })
+      res.attachment('answers.csv');
+      res.status(200).send(data);
+    }
+    else {
+      res.status(404);
+      res.json({ "error": "Type not supported." });
+    }
   })
 });
 
-app.get('/results/answers/csv', function (req, res) {
-  get_answers(function (answers) {
-    var data = json2csv(answers, { fields: answer_fields })
-    res.attachment('answers.csv');
-    res.status(200).send(data);
-  })
-});
+app.get('/results/sentiments/:format', function (req, res) {
+  var format = req.params.format;
 
-app.get('/results/sentiments/json', function (req, res) {
-  res.status(200);
   get_sentiments(function (sentiments) {
-    res.json({ "sentiments": sentiments });
+    if (format == "json") {
+      res.status(200);
+      res.json({ "sentiments": sentiments });
+    }
+    else if (format == "csv") {
+      var data = json2csv(sentiments, { fields: sentiment_fields })
+      res.attachment('sentiments.csv');
+      res.status(200).send(data);
+    }
+    else {
+      res.status(404);
+      res.json({ "error": "Type not supported." });
+    }
   });
-});
-
-app.get('/results/sentiments/csv', function (req, res) {
-  get_sentiments(function (sentiments) {
-    var data = json2csv(sentiments, { fields: sentiment_fields })
-    res.attachment('sentiments.csv');
-    res.status(200).send(data);
-  })
 });
 
 function get_sentiment_session_ids(callback) {
@@ -127,7 +137,7 @@ function get_sentiment_session_ids(callback) {
     }
     callback(session_ids);
   });
-} 
+}
 
 app.get('/results/sessions', function (req, res) {
   res.status(200);
