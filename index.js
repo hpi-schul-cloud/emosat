@@ -27,6 +27,38 @@ function init_database() {
     db.run("CREATE TABLE IF NOT EXISTS sentiment (timestamp INTEGER, session_id TEXT, sentiment TEXT)");
     db.run("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id TEXT, option_left TEXT, option_right TEXT, value INTEGER)");
   });
+  init_questions();
+}
+
+function table_exists(table, callback) {
+  // SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';
+  var stmt = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?");
+  stmt.all(table, function (err, rows) {
+    callback(rows.length > 0);
+  });
+}
+
+function init_questions() {
+  table_exists("question", function (exists) {
+    if (!exists) {
+      db.serialize(function () {
+        db.run("CREATE TABLE IF NOT EXISTS question (id INTEGER PRIMARY KEY, option_left TEXT, option_right TEXT, category TEXT)");
+
+        var stmt = db.prepare("INSERT INTO question (option_left, option_right, category) VALUES (?,?,?)");
+        for (var i in questions().hedonic_quality) {
+          stmt.run(questions().hedonic_quality[i][0], questions().hedonic_quality[i][1], "hedonic_quality");
+        }
+
+        for (var i in questions().pragmatic_quality) {
+          stmt.run(questions().pragmatic_quality[i][0], questions().pragmatic_quality[i][1], "pragmatic_quality");
+        }
+        stmt.finalize();
+      });
+    }
+    else {
+      console.log("Question table already exists. Skipping.");
+    }
+  });
 }
 
 app.get("/session_id", function (req, res) {
