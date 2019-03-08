@@ -28,4 +28,8 @@ If the survey server's request URL needs to be adapted, e.g. because it is runni
 
 There might be several answers for a single questions and a single session ID, as the data is immediately transferred to the backend. If only the final result is of interes, all others can be ignored.
 
+If only entries for a specific session ID are of interest, the session_id can be specified with the GET parameter `sid`, e.g. `/results/sentiments/json?sid=c6aed210-416c-11e9-9ec8-036a18eb7040`.
+
 ![csv-image](documentation/csv.png "CSV Output of given answers")
+
+`/results/sessions` returns a list of sessions stored in the system with the corresponding activity time range (`from_time` and `to_time`).
