@@ -66,10 +66,19 @@ app.get("/session_id", function (req, res) {
   res.json({ session_id: uuidv1() });
 })
 
+function questions_for_category(callback, category_name) {
+  var stmt = db.prepare("SELECT id, option_left, option_right FROM question WHERE category = ?");
+  stmt.all(category_name, function (err, rows) {
+    callback(rows);
+  });
+}
+
 app.get('/questions', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking for questions");
-  res.json(questions());
+  questions_for_category(function(questions) {
+    res.json(questions);
+  }, "hedonic_quality");
 });
 
 app.get('/should_present_survey', function (req, res) {

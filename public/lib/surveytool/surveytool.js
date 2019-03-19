@@ -86,7 +86,7 @@ function fill_survey(answer_source) {
   clear_survey();
   for (i in answer_source) {
     var pair = answer_source[i];
-    add_survey_question(pair[0], pair[1], "question-" + i);
+    add_survey_question(pair.option_left, pair.option_right, "question-" + pair.id);
   }
 }
 
@@ -106,7 +106,7 @@ function resize_survey_content(width, height) {
 function content_stage_2() {
   $(".title").text("Please help us improve by rating us according to the following criteria.");
   $.getJSON("/questions?" + get_sid_url_string() + get_role_url_string(), function (data) {
-    fill_survey(data.pragmatic_quality);
+    fill_survey(data);
     //fill_survey_partial(data.hedonic_quality, 3, 0);
     show_survey_table(true);
   });
