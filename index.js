@@ -24,6 +24,7 @@ const port = (options.port != undefined) ? options.port : 3000;
 
 function init_database() {
   db.serialize(function () {
+    db.run("CREATE TABLE IF NOT EXISTS opt_out (timestamp INTEGER, session_id TEXT)");
     db.run("CREATE TABLE IF NOT EXISTS sentiment (timestamp INTEGER, session_id TEXT, sentiment TEXT)");
     db.run("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id TEXT, option_left TEXT, option_right TEXT, value INTEGER)");
   });
@@ -76,7 +77,7 @@ function questions_for_category(callback, category_name) {
 app.get('/questions', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking for questions");
-  questions_for_category(function(questions) {
+  questions_for_category(function (questions) {
     res.json(questions);
   }, "hedonic_quality");
 });
@@ -84,12 +85,43 @@ app.get('/questions', function (req, res) {
 app.get('/should_present_survey', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking whether to present survey");
-  res.json({ "present_survey": true, "timeout": 1000 });
+  has_opted_out(function (opt_out) {
+    if (!opt_out) {
+      res.json({ "present_survey": true, "timeout": 1000 });
+      console.log("(" + req.query.sid + ") We're good to go.");
+    }
+    else {
+      res.json({ "present_survey": false });
+      console.log("(" + req.query.sid + ") Session had already opted out. No questions asked.");
+    }
+  }, req.query.sid);
+
+});
+
+function has_opted_out(callback, session_id) {
+  var stmt = db.prepare("SELECT 1 FROM opt_out WHERE session_id = ?");
+  stmt.all(session_id, function (err, rows) {
+    callback(rows.length > 0);
+  });
+}
+
+app.post('/opt_out', function (req, res, next) {
+  res.status(200);
+  res.json({ success: true });
+  db.serialize(function () {
+    var stmt = db.prepare("INSERT INTO opt_out VALUES (?, ?)");
+    stmt.run(
+      + new Date(),
+      req.body.session_id
+    );
+    stmt.finalize();
+  });
+  console.log("(" + req.body.session_id + ") User opted out");
 });
 
 app.post('/initial_sentiment', function (req, res, next) {
   res.status(200);
-  res.json({ sucess: true });
+  res.json({ success: true });
   db.serialize(function () {
     var stmt = db.prepare("INSERT INTO sentiment VALUES (?, ?, ?)");
     stmt.run(

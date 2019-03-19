@@ -78,6 +78,20 @@ function publish_initial_sentiment(positive_sentiment) {
   });
 }
 
+function opt_out() {
+  $.ajax({
+    url: server_prefix + "/opt_out",
+    type: "POST",
+    data: JSON.stringify({ "session_id": survey_options.session_id }),
+    contentType: "application/json; charset=utf-8",
+    processData: false,
+    dataType: "json",
+    success: function () {
+      console.log("Successfully sent opt out to server");
+    }
+  });
+}
+
 function clear_survey() {
   $(".survey-answer-option").remove();
 }
@@ -148,6 +162,7 @@ function init_survey(options) {
 
   $(".close-button").click(function () {
     show_survey(false);
+    opt_out();
   })
 
   $(".survey_reaction").click(function () {
