@@ -6,7 +6,9 @@ const answer_fields = ['timestamp', 'session_id', 'option_left', 'option_right',
 const sentiment_fields = ['timestamp', 'session_id', 'sentiment'];
 
 const Database = require('better-sqlite3');
-const db = new Database('survey3.sqlite', { verbose: console.log });
+const db = new Database('survey3.sqlite', {
+  /* verbose: console.log */
+});
 
 const bodyParser = require('body-parser')
 const app = express()
@@ -39,7 +41,6 @@ function add_question(type, parameters) {
   var question_stmt = db.prepare("INSERT INTO question (type) VALUES (?)");
 
   var question_id = -1;
-  var error = { "description": "unknown" };
 
   question_stmt.run(type);
 
@@ -152,61 +153,67 @@ function get_answers_for_question(question_id) {
 }
 
 function get_questions(category_name, limit, offset) {
-  // select question.id as id, question.type as type, possible_response.text as text from question, possible_response where question.id = possible_response.question_id LIMIT ? OFFSET ? ORDER BY question_id ASC;
-  if (category_name !== undefined) {
-    var stmt = db.prepare("SELECT id, option_left, option_right FROM question WHERE category = ?");
-    return stmt.all(category_name);
-  }
-  else {
-    var stmt = db.prepare("SELECT t1.id AS id, \
+  var category_filter = (category_name !== undefined) ? "ANd category.name = ? " : "";
+  var limit_statement = limit > 0 ? "LIMIT ? OFFSET ?" : "";
+
+  var sql = "SELECT t1.id AS id, \
                                   t1.type AS type, \
                                   possible_response.text AS text, \
                                   category.name as category \
                           FROM \
-                                  (SELECT * FROM question LIMIT ? OFFSET ?) t1, \
+                                  (SELECT * FROM question " + limit_statement + ")\
+                                  t1, \
                                   possible_response, \
                                   question_category, \
                                   category \
                           WHERE \
                                   t1.id = possible_response.question_id \
-                                AND \
+                                aND \
                                   t1.id = question_category.question_id \
-                                AND \
-                                  question_category.category_id = category.id \
+                                AnD \
+                                  question_category.category_id = category.id " + category_filter + "\
                           ORDER BY \
                                   id ASC, \
-                                  possible_response.question_order ASC;");
-    var rows = stmt.all(limit, offset);
-    var result = [];
-    var mapping = {};
-    for (row_index in rows) {
-      var row = rows[row_index];
-      var key = "question_" + row.id;
-      if (!(key in mapping)) {
-        mapping[key] = result.length;
-        result.push({ "id": row.id, "type": row.type, "possible_reponses": [], "categories": [] });
-      }
-      if (!result[mapping[key]].possible_reponses.includes(row.text)) {
-        result[mapping[key]].possible_reponses.push(row.text);
-      }
-      if (!result[mapping[key]].categories.includes(row.category)) {
-        result[mapping[key]].categories.push(row.category);
-      }
-    }
-    return result;
+                                  possible_response.question_order ASC;";
+  var stmt = db.prepare(sql);
+  var parameters = [];
+  if (limit > 0) {
+    parameters.push(limit);
+    parameters.push(offset);
   }
+  if (category_name !== undefined) {
+    parameters.push(category_name);
+  }
+  var rows = stmt.all(parameters);
+  var result = [];
+  var mapping = {};
+  for (row_index in rows) {
+    var row = rows[row_index];
+    var key = "question_" + row.id;
+    if (!(key in mapping)) {
+      mapping[key] = result.length;
+      result.push({ "id": row.id, "type": row.type, "possible_reponses": [], "categories": [] });
+    }
+    if (!result[mapping[key]].possible_reponses.includes(row.text)) {
+      result[mapping[key]].possible_reponses.push(row.text);
+    }
+    if (!result[mapping[key]].categories.includes(row.category)) {
+      result[mapping[key]].categories.push(row.category);
+    }
+  }
+  return result;
 }
 
 app.get('/questions', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking for questions");
-  res.json(get_questions("hedonic_quality"));
+  res.json(get_questions("hedonic_quality"), 0, 0);
 });
 
 app.get('/should_present_survey', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking whether to present survey");
-  var opt_out = has_opted_out(req.query.sid);
+  var opt_out = has_opted_out(  req.query.sid);
   if (!opt_out) {
     res.json({ "present_survey": true, "timeout": 1000 });
     console.log("(" + req.query.sid + ") We're good to go.");
