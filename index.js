@@ -62,22 +62,44 @@ function init_questions() {
   });
 }
 
+// Admin requests
+
+app.get('/admin/question', function (req, res) {
+  // Endpoint to return all available questions from 
+  // the DB for admin purposes
+
+  var limit = req.query.limit || 10;
+  var offset = req.query.offset || 0;
+  get_questions(function (questions) {
+    res.json(questions);
+  }, undefined, limit, offset);
+});
+
 app.get("/session_id", function (req, res) {
   res.status(200);
   res.json({ session_id: uuidv1() });
 })
 
-function questions_for_category(callback, category_name) {
-  var stmt = db.prepare("SELECT id, option_left, option_right FROM question WHERE category = ?");
-  stmt.all(category_name, function (err, rows) {
-    callback(rows);
-  });
+function get_questions(callback, category_name, limit, offset) {
+  console.log(limit, offset);
+  if (category_name !== undefined) {
+    var stmt = db.prepare("SELECT id, option_left, option_right FROM question WHERE category = ?");
+    stmt.all(category_name, function (err, rows) {
+      callback(rows);
+    });
+  }
+  else {
+    var stmt = db.prepare("SELECT * FROM question order by ID asc limit ? offset ?");
+    stmt.all(limit, offset, function (err, rows) {
+      callback(rows);
+    });
+  }
 }
 
 app.get('/questions', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking for questions");
-  questions_for_category(function (questions) {
+  get_questions(function (questions) {
     res.json(questions);
   }, "hedonic_quality");
 });
