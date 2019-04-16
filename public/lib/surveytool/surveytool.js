@@ -31,12 +31,12 @@ function show_survey(show) {
   }
 }
 
-function add_survey_question(left_word, right_word, row_identifier) {
+function add_survey_question(left_word, right_word, question_id) {
   var table = $(".survey-table")
   var new_answer = $(".survey-tr-prototype").clone();
-  row_identifier = row_identifier || "answer";
+  row_identifier = "question-" + question_id;
   new_answer.removeClass("hidden");
-  new_answer.attr("question", left_word + "#" + right_word);
+  new_answer.attr("question", question_id);
   new_answer.find("input").on("click", function (event) {
     var question = $(event.target).parents("tr").attr("question");
     var answer = $(event.target).attr("answer")
@@ -99,8 +99,11 @@ function clear_survey() {
 function fill_survey(answer_source) {
   clear_survey();
   for (i in answer_source) {
-    var pair = answer_source[i];
-    add_survey_question(pair.option_left, pair.option_right, "question-" + pair.id);
+    var question_data = answer_source[i];
+    if (question_data.type == "two_type") {
+      add_survey_question(question_data.possible_reponses[0], question_data.possible_reponses[1], question_data.id);
+    }
+    
   }
 }
 
