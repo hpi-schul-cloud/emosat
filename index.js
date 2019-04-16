@@ -26,7 +26,7 @@ const port = (options.port != undefined) ? options.port : 3000;
 function init_database() {
   db.prepare("CREATE TABLE IF NOT EXISTS opt_out (timestamp INTEGER, session_id TEXT)").run();
   db.prepare("CREATE TABLE IF NOT EXISTS sentiment (timestamp INTEGER, session_id TEXT, sentiment TEXT)").run();
-  db.prepare("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id TEXT, option_left TEXT, option_right TEXT, value INTEGER)").run();
+  db.prepare("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id TEXT, question_id INTEGER, value INTEGER)").run();
   init_questions();
 }
 
@@ -252,26 +252,42 @@ app.post('/initial_sentiment', function (req, res, next) {
   console.log("(" + req.body.session_id + ") Initial sentiment" + " --> " + req.body.sentiment);
 });
 
-function get_answers(session_id) {
-  answers = [];
-  var stmt = session_id !== undefined ?
-    db.prepare("SELECT timestamp, session_id, option_left, option_right, value FROM response WHERE session_id = ?") :
-    db.prepare("SELECT timestamp, session_id, option_left, option_right, value FROM response");
-  return stmt.all(session_id);
+function get_answers(session_id, single_value) {
+  var session_filter = session_id !== undefined ? "WHERE session_id = ? " : "";
+  var sql = "";
+  if (single_value) {
+    sql = "SELECT t1.timestamp, t1.session_id, t1.question_id, response.value FROM \
+                (SELECT max(timestamp) as timestamp, \
+                        session_id, \
+                        question_id \
+                   FROM response " + session_filter + "\
+                   GROUP BY session_id, question_id) t1 \
+                INNER JOIN response \
+                ON t1.timestamp = response.timestamp \
+               AND t1.session_id = response.session_id \
+               AND t1.question_id = response.question_id;";
+  }
+  else {
+    sql = "SELECT timestamp, \
+                  session_id, \
+                  question_id \
+                  FROM response " + session_filter + ";";
+  }
+  return db.prepare(sql).all(session_id !== undefined ? [session_id] : []);
 }
 
 function get_sentiments(session_id) {
-  sentiments = [];
   var stmt = session_id !== undefined ?
     db.prepare("SELECT timestamp, session_id, sentiment FROM sentiment WHERE session_id = ?") :
     db.prepare("SELECT timestamp, session_id, sentiment FROM sentiment");
-  return stmt.all(session_id);
+  return session_id !== undefined ? stmt.all(session_id) : stmt.all();
 }
 
 app.get('/results/answers/:format', function (req, res) {
   var format = req.params.format;
   var sid = req.query.sid || undefined
-  var answers = get_answers(sid);
+  var single_answer = req.query.single_answer == "true";
+  var answers = get_answers(sid, single_answer);
   if (format == "json") {
     res.status(200);
     res.json({ "answers": answers });
@@ -308,7 +324,7 @@ app.get('/results/sentiments/:format', function (req, res) {
 
 function get_session_ids() {
   session_ids = [];
-  return db.prepare("SELECT session_id, MIN(timestamp) AS 'from_time', MAX(timestamp) AS 'to_time' FROM (SELECT session_id, timestamp FROM sentiment UNION ALL SELECT session_id, timestamp FROM response) GROUP BY session_id;").run();
+  return db.prepare("SELECT session_id, MIN(timestamp) AS 'from_time', MAX(timestamp) AS 'to_time' FROM (SELECT session_id, timestamp FROM sentiment UNION ALL SELECT session_id, timestamp FROM response) GROUP BY session_id;").all();
 }
 
 app.get('/results/sessions', function (req, res) {
@@ -319,16 +335,15 @@ app.get('/results/sessions', function (req, res) {
 app.post('/survey_results', function (req, res, next) {
   res.status(200);
   res.json({ sucess: true });
-  var stmt = db.prepare("INSERT INTO response VALUES (?, ?, ?, ?, ?)");
-  //session_id TEXT, option_left TEXT, option_right TEXT, value INTEGER
+  var stmt = db.prepare("INSERT INTO response VALUES (?, ?, ?, ?)");
+  //time TIMESTAMP, session_id TEXT, question_id INTEGER, value INTEGER
   stmt.run(
     + new Date(),
     req.body.session_id,
-    req.body.question.split("#")[0],
-    req.body.question.split("#")[1],
+    req.body.question,
     req.body.answer
   );
-  console.log("(" + req.body.session_id + ") " + req.body.question + " --> " + req.body.answer);
+  console.log("answer received (" + req.body.session_id + ") " + req.body.question + " --> " + req.body.answer);
 });
 
 // Serve static content from the public directory
