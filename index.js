@@ -213,7 +213,7 @@ app.get('/questions', function (req, res) {
 app.get('/should_present_survey', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking whether to present survey");
-  var opt_out = has_opted_out(  req.query.sid);
+  var opt_out = has_opted_out(req.query.sid);
   if (!opt_out) {
     res.json({ "present_survey": true, "timeout": 1000 });
     console.log("(" + req.query.sid + ") We're good to go.");
@@ -324,7 +324,11 @@ app.get('/results/sentiments/:format', function (req, res) {
 
 function get_session_ids() {
   session_ids = [];
-  return db.prepare("SELECT session_id, MIN(timestamp) AS 'from_time', MAX(timestamp) AS 'to_time' FROM (SELECT session_id, timestamp FROM sentiment UNION ALL SELECT session_id, timestamp FROM response) GROUP BY session_id;").all();
+  return db.prepare("SELECT session_id, MIN(timestamp) AS 'from_time', MAX(timestamp) AS 'to_time' \
+                    FROM (SELECT session_id, timestamp FROM sentiment \
+                            UNION ALL \
+                          SELECT session_id, timestamp FROM response) \
+                    GROUP BY session_id;").all();
 }
 
 app.get('/results/sessions', function (req, res) {
