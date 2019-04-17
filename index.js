@@ -96,6 +96,11 @@ function add_category_for_question(question_id, category_name) {
 function bootstrap_questions() {
   categories = Object.keys(questions());
   console.log(categories);
+  add_question("two_type", {responses : ["inspiring", "boring"], categories : ["test_survey", "set_A"]});
+  add_question("two_type", {responses : ["good", "bad"], categories : ["test_survey"]});
+  add_question("single_type", {responses : ["I really like this software."], categories : ["test_survey", "set_A"]});
+  add_question("single_type", {responses : ["I like the easter bunny."], categories : ["test_survey"]});
+
   for (type_index in categories) {
     var type = categories[type_index];
 
@@ -207,7 +212,7 @@ function get_questions(category_name, limit, offset) {
 app.get('/questions', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking for questions");
-  res.json(get_questions("hedonic_quality"), 0, 0);
+  res.json(get_questions("set_A"), 0, 0);
 });
 
 app.get('/should_present_survey', function (req, res) {

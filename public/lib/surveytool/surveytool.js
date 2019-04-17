@@ -31,17 +31,18 @@ function show_survey(show) {
   }
 }
 
-function add_survey_question(left_word, right_word, question_id) {
+function add_survey_question(type, answers, question_id) {
+  
   var table = $(".survey-table")
   var new_answer = $(".survey-tr-prototype").clone();
   row_identifier = "question-" + question_id;
   new_answer.removeClass("hidden");
+
   new_answer.attr("question", question_id);
   new_answer.find("input").on("click", function (event) {
     var question = $(event.target).parents("tr").attr("question");
     var answer = $(event.target).attr("answer")
     var response = JSON.stringify({ "session_id": survey_options.session_id, question: question, answer: answer });
-
     $.ajax({
       url: server_prefix + "/survey_results",
       type: "POST",
@@ -59,8 +60,20 @@ function add_survey_question(left_word, right_word, question_id) {
   new_answer.removeClass("survey-tr-prototype");
   new_answer.addClass("survey-answer-option");
   new_answer.find("input").attr("name", row_identifier)
-  new_answer.find(".word-left").html(left_word);
-  new_answer.find(".word-right").html(right_word);
+
+  if (type == "single_type") {
+    new_answer.find(".word-left").html("Does not apply");
+    new_answer.find(".word-right").html("Fully applies");
+    var question_header = $(".survey-tr-header-prototype").clone();
+    question_header.removeClass("survey-tr-header-prototype");
+    question_header.removeClass("hidden");
+    question_header.find(".survey-question").html(answers[0]);
+    table.append(question_header);
+  }
+  else if (type == "two_type") {
+    new_answer.find(".word-left").html(answers[0]);
+    new_answer.find(".word-right").html(answers[1]);
+  }
   table.append(new_answer);
 }
 
@@ -100,10 +113,7 @@ function fill_survey(answer_source) {
   clear_survey();
   for (i in answer_source) {
     var question_data = answer_source[i];
-    if (question_data.type == "two_type") {
-      add_survey_question(question_data.possible_reponses[0], question_data.possible_reponses[1], question_data.id);
-    }
-    
+    add_survey_question(question_data.type, question_data.possible_reponses, question_data.id);
   }
 }
 
@@ -192,6 +202,9 @@ function survey_html_content() {
       <div class="content">
         <div id="survey_area" class="hidden">
           <table class="survey-table">
+            <tr class="survey-tr-header survey-tr-header-prototype hidden">
+              <td colspan="7"><span class="survey-question">That's the Question</span></td>
+            </tr>
             <tr class="survey-tr-prototype hidden">
               <td><span class="word-left">left</span></td>
               <td><input answer="1" type="radio"></td>
