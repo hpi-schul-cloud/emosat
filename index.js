@@ -24,11 +24,13 @@ const options = commandLineArgs(optionDefinitions)
 const port = (options.port != undefined) ? options.port : 3000;
 
 function init_database() {
-  db.prepare("CREATE TABLE IF NOT EXISTS opt_out (timestamp INTEGER, session_id TEXT)").run();
-  db.prepare("CREATE TABLE IF NOT EXISTS sentiment (timestamp INTEGER, session_id TEXT, sentiment TEXT)").run();
-  db.prepare("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id TEXT, question_id INTEGER, value INTEGER)").run();
+  db.prepare("CREATE TABLE IF NOT EXISTS opt_out (timestamp INTEGER, session_id INTEGER)").run();
+  db.prepare("CREATE TABLE IF NOT EXISTS sentiment (timestamp INTEGER, session_id INTEGER, sentiment TEXT)").run();
+  db.prepare("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id INTEGER, question_id INTEGER, value INTEGER)").run();
+  init_session_storage();
   init_survey();
   init_questions();
+
 }
 
 function table_exists(table) {
@@ -40,7 +42,7 @@ function table_exists(table) {
 function create_survey(name, title) {
   var survey_stmt = db.prepare("INSERT INTO survey (name, title) VALUES (?, ?)");
   survey_stmt.run(name, title);
-  
+
   var stmt = db.prepare("SELECT max(ID) as id FROM survey");
   var result = stmt.get();
   var survey_id = result.id;
@@ -121,14 +123,14 @@ function bootstrap_questions() {
   categories = Object.keys(questions());
   console.log(categories);
   var test_survey_id = create_survey("test_survey", "The TEST survey");
-  var question1 = add_question("two_type_7", {responses : ["inspiring", "boring"], categories : ["funny_questions"]});
-  var question2 = add_question("two_type_7", {responses : ["good", "bad"], categories : ["set_A"]});
-  
+  var question1 = add_question("two_type_7", { responses: ["inspiring", "boring"], categories: ["funny_questions"] });
+  var question2 = add_question("two_type_7", { responses: ["good", "bad"], categories: ["set_A"] });
+
   add_question_to_survey(test_survey_id, question1);
   add_question_to_survey(test_survey_id, question2);
 
-  add_question("single_type_7", {responses : ["I really like this software."], categories : ["test_survey", "set_B"]});
-  add_question("single_type_7", {responses : ["I like the easter bunny."], categories : ["test_survey", "set_B"]});
+  add_question("single_type_7", { responses: ["I really like this software."], categories: ["test_survey", "set_B"] });
+  add_question("single_type_7", { responses: ["I like the easter bunny."], categories: ["test_survey", "set_B"] });
 
   for (type_index in categories) {
     var type = categories[type_index];
@@ -144,10 +146,51 @@ function bootstrap_questions() {
   }
 }
 
+function init_session_storage() {
+  if (!table_exists("session")) {
+    db.prepare("CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY, external_id TEXT, timestamp INTEGER)").run();
+  }
+}
+
+function create_session(external_id) {
+  if (external_id == undefined) {
+    external_id = uuidv1();
+  }
+  else if (session_exists(external_id)) {
+    return external_id;
+  }
+
+  var stmt = db.prepare("INSERT INTO session (external_id, timestamp) VALUES (?, ?)");
+  stmt.run(external_id, + new Date());
+  return external_id;
+}
+
+function session_exists(external_id) {
+  return (find_session_by_external_id !== false);
+}
+
+function find_session_by_external_id(external_id, create_if_not_exists) {
+  var stmt = db.prepare("SELECT id FROM session WHERE external_id = ?");
+  var rows = stmt.all(external_id);
+  console.log(rows);
+  if (rows.length == 0) {
+    if (create_if_not_exists == true) {
+      create_session(external_id);
+      return find_session_by_external_id(external_id, false);
+    }
+    else {
+      return false;
+    }
+  }
+  else {
+    return rows[0].id;
+  }
+}
+
 function init_survey() {
   if (!table_exists("survey")) {
     db.prepare("CREATE TABLE IF NOT EXISTS survey (id INTEGER PRIMARY KEY, name TEXT, title TEXT)").run();
-    db.prepare("CREATE TABLE IF NOT EXISTS survey_question (id INTEGER PRIMARY KEY, survey_id INTEGER, question_id INTEGER, position INTEGER)").run(); 
+    db.prepare("CREATE TABLE IF NOT EXISTS survey_question (id INTEGER PRIMARY KEY, survey_id INTEGER, question_id INTEGER, position INTEGER)").run();
   }
 }
 
@@ -164,6 +207,43 @@ function init_questions() {
   }
 }
 
+function opt_out(external_session_id) {
+  var session_id = find_session_by_external_id(external_session_id, true);
+  var stmt = db.prepare("INSERT INTO opt_out VALUES (?, ?)");
+  stmt.run(
+    + new Date(),
+    session_id
+  );
+}
+
+function has_opted_out(external_session_id) {
+  var session_id = find_session_by_external_id(external_session_id, true);
+  var stmt = db.prepare("SELECT 1 FROM opt_out WHERE session_id = ?");
+  console.log(stmt, session_id);
+  var rows = stmt.all(session_id);
+  return (rows.length > 0);
+}
+
+function process_initial_sentiment(external_session_id, sentiment) {
+  var stmt = db.prepare("INSERT INTO sentiment VALUES (?, ?, ?)");
+  var session_id = find_session_by_external_id(external_session_id, true);
+  stmt.run(
+    + new Date(),
+    session_id,
+    sentiment);
+}
+
+function process_survey_result(external_session_id, question, answer) {
+  var stmt = db.prepare("INSERT INTO response VALUES (?, ?, ?, ?)");
+  var session_id = find_session_by_external_id(external_session_id, true);
+
+  stmt.run(
+    + new Date(),
+    session_id,
+    question,
+    answer
+  );
+}
 // Admin requests
 
 app.get('/admin/question', function (req, res) {
@@ -194,7 +274,7 @@ app.get('/admin/survey', function (req, res) {
 
 app.get("/session_id", function (req, res) {
   res.status(200);
-  res.json({ session_id: uuidv1() });
+  res.json({ session_id: create_session() });
 })
 
 function get_answers_for_question(question_id) {
@@ -205,7 +285,7 @@ function get_answers_for_question(question_id) {
 function get_survey(survey_name) {
   var stmt = db.prepare("SELECT id, title FROM survey where name = ?");
   return stmt.all(survey_name);
-} 
+}
 
 function get_surveys(limit, offset) {
   var stmt = db.prepare("SELECT survey.id as id, survey.title as title, survey.name as name, count(1) as question_count FROM survey, survey_question where survey.id = survey_question.survey_id group by survey.id, survey.title, survey.name");
@@ -220,7 +300,7 @@ function get_questions(survey_name, category_name, limit, offset) {
   var survey_order = "";
 
   if (survey_name !== undefined) {
-    
+
     var survey_data = get_survey(survey_name);
     console.log(survey_data);
     if (survey_data.length > 0) {
@@ -233,12 +313,14 @@ function get_questions(survey_name, category_name, limit, offset) {
     else {
       var error_text = "Survey " + survey_name + " was not found.";
       console.log(error_text);
-      return {questions : [], 
-              survey_title : "", 
-              error: error_text, 
-              status : 404};
+      return {
+        questions: [],
+        survey_title: "",
+        error: error_text,
+        status: 404
+      };
     }
-    
+
   }
 
   var category_filter = (category_name !== undefined) ? " ANd category.name = ? " : "";
@@ -259,7 +341,7 @@ function get_questions(survey_name, category_name, limit, offset) {
                                 aND \
                                   t1.id = question_category.question_id \
                                 AnD \
-                                  question_category.category_id = category.id " + category_filter + survey_filter+ "\
+                                  question_category.category_id = category.id " + category_filter + survey_filter + "\
                           ORDER BY " + survery_order + "\
                                   id ASC, \
                                   possible_response.question_order ASC;";
@@ -294,11 +376,13 @@ function get_questions(survey_name, category_name, limit, offset) {
     }
   }
 
-  return {questions : result, 
-    survey_title : survey_title,
-    survey_id : survey_id,
-    error: "", 
-    status : 200};
+  return {
+    questions: result,
+    survey_title: survey_title,
+    survey_id: survey_id,
+    error: "",
+    status: 200
+  };
 
 }
 
@@ -323,31 +407,17 @@ app.get('/should_present_survey', function (req, res) {
   }
 });
 
-function has_opted_out(session_id) {
-  var stmt = db.prepare("SELECT 1 FROM opt_out WHERE session_id = ?");
-  var rows = stmt.all(session_id);
-  return (rows.length > 0);
-}
-
 app.post('/opt_out', function (req, res, next) {
   res.status(200);
   res.json({ success: true });
-  var stmt = db.prepare("INSERT INTO opt_out VALUES (?, ?)");
-  stmt.run(
-    + new Date(),
-    req.body.session_id
-  );
+  opt_out(session_id);
   console.log("(" + req.body.session_id + ") User opted out");
 });
 
 app.post('/initial_sentiment', function (req, res, next) {
   res.status(200);
   res.json({ success: true });
-  var stmt = db.prepare("INSERT INTO sentiment VALUES (?, ?, ?)");
-  stmt.run(
-    + new Date(),
-    req.body.session_id,
-    req.body.sentiment);
+  process_initial_sentiment(req.body.session_id, req.body.sentiment);
   console.log("(" + req.body.session_id + ") Initial sentiment" + " --> " + req.body.sentiment);
 });
 
@@ -375,11 +445,12 @@ function get_answers(session_id, single_value) {
   return db.prepare(sql).all(session_id !== undefined ? [session_id] : []);
 }
 
-function get_sentiments(session_id) {
-  var stmt = session_id !== undefined ?
+function get_sentiments(external_session_id) {
+  var session_id = find_session_by_external_id(external_session_id, false);
+  var stmt = session_id !== false ?
     db.prepare("SELECT timestamp, session_id, sentiment FROM sentiment WHERE session_id = ?") :
     db.prepare("SELECT timestamp, session_id, sentiment FROM sentiment");
-  return session_id !== undefined ? stmt.all(session_id) : stmt.all();
+  return session_id !== false ? stmt.all(session_id) : stmt.all();
 }
 
 app.get('/results/answers/:format', function (req, res) {
@@ -438,14 +509,7 @@ app.get('/results/sessions', function (req, res) {
 app.post('/survey_results', function (req, res, next) {
   res.status(200);
   res.json({ sucess: true });
-  var stmt = db.prepare("INSERT INTO response VALUES (?, ?, ?, ?)");
-  //time TIMESTAMP, session_id TEXT, question_id INTEGER, value INTEGER
-  stmt.run(
-    + new Date(),
-    req.body.session_id,
-    req.body.question,
-    req.body.answer
-  );
+  process_survey_result(req.body.session_id, req.body.question, req.body.answer);
   console.log("answer received (" + req.body.session_id + ") " + req.body.question + " --> " + req.body.answer);
 });
 

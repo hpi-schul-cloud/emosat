@@ -19,7 +19,7 @@ In your web source file, create an empty div, for example add `<div id="my_surve
 <script src="lib/surveytool/surveytool.js"></script>
 ```
 
-In your JS code, call `init_survey({div_name: "my_survey_div"});`. Optionally, you can also provide a session/user id (depending on the use case): `init_survey({div_name: "my_survey_div", session_id: "0000-1234-5678"});`. If none is provided, a UUID is generated on the server side.
+In your JS code, call `init_survey({div_name: "my_survey_div"});`. Optionally, you can also provide a session/user id (depending on the use case): `init_survey({div_name: "my_survey_div", session_id: "0000-1234-5678"});`. If none is provided, a UUID is generated on the server side. The session ID should not be possible to guess for the user, as otherwise other user's survey results could be influenced. Therefore internal and external ID of the session are clearly distinguished throughout the application.
 
 If the survey server's request URL needs to be adapted, e.g. because it is running behind a reverse proxy, use `init_survey({div_name: "my_survey_div", server_prefix: "/surveytool"});`
 
