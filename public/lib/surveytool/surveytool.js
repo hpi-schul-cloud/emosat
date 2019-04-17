@@ -32,9 +32,18 @@ function show_survey(show) {
 }
 
 function add_survey_question(type, answers, question_id) {
-  
+
   var table = $(".survey-table")
-  var new_answer = $(".survey-tr-prototype").clone();
+
+  var new_answer = undefined;
+  if (type == "two_type_7" || type == "single_type_7") {
+    new_answer = $(".survey-likert-7-tr-prototype").clone();
+    new_answer.removeClass("survey-likert-7-tr-prototype");
+  }
+  else {
+    new_answer = $(".survey-tr-prototype").clone();
+    new_answer.removeClass("survey-tr-prototype");
+  }
   row_identifier = "question-" + question_id;
   new_answer.removeClass("hidden");
 
@@ -57,23 +66,31 @@ function add_survey_question(type, answers, question_id) {
 
     console.log(question, answer);
   })
-  new_answer.removeClass("survey-tr-prototype");
+
   new_answer.addClass("survey-answer-option");
   new_answer.find("input").attr("name", row_identifier)
 
-  if (type == "single_type") {
+  if (type == "single_type_5" || type == "single_type_7") {
     new_answer.find(".word-left").html("Does not apply");
     new_answer.find(".word-right").html("Fully applies");
-    var question_header = $(".survey-tr-header-prototype").clone();
-    question_header.removeClass("survey-tr-header-prototype");
+    var question_header = undefined;
+    if (type == "single_type_5") {
+      var question_header = $(".survey-tr-header-prototype").clone();
+      question_header.removeClass("survey-tr-header-prototype");
+    }
+    else if (type == "single_type_7") {
+      var question_header = $(".survey-tr-header-7-prototype").clone();
+      question_header.removeClass("survey-tr-header-7-prototype");
+    }
     question_header.removeClass("hidden");
     question_header.find(".survey-question").html(answers[0]);
     table.append(question_header);
   }
-  else if (type == "two_type") {
+  else if (type == "two_type_5" || type == "two_type_7") {
     new_answer.find(".word-left").html(answers[0]);
     new_answer.find(".word-right").html(answers[1]);
   }
+
   table.append(new_answer);
 }
 
@@ -205,6 +222,9 @@ function survey_html_content() {
             <tr class="survey-tr-header survey-tr-header-prototype hidden">
               <td colspan="7"><span class="survey-question">That's the Question</span></td>
             </tr>
+            <tr class="survey-tr-header survey-tr-header-7-prototype hidden">
+              <td colspan="9"><span class="survey-question">That's the Question</span></td>
+            </tr>
             <tr class="survey-tr-prototype hidden">
               <td><span class="word-left">left</span></td>
               <td><input answer="1" type="radio"></td>
@@ -212,6 +232,17 @@ function survey_html_content() {
               <td><input answer="3" type="radio"></td>
               <td><input answer="4" type="radio"></td>
               <td><input answer="5" type="radio"></td>
+              <td><span class="word-right">right</span></td>
+            </tr>
+            <tr class="survey-likert-7-tr-prototype hidden">
+              <td><span class="word-left">left</span></td>
+              <td><input answer="1" type="radio"></td>
+              <td><input answer="2" type="radio"></td>
+              <td><input answer="3" type="radio"></td>
+              <td><input answer="4" type="radio"></td>
+              <td><input answer="5" type="radio"></td>
+              <td><input answer="6" type="radio"></td>
+              <td><input answer="7" type="radio"></td>
               <td><span class="word-right">right</span></td>
             </tr>
           </table>

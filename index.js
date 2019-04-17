@@ -96,10 +96,10 @@ function add_category_for_question(question_id, category_name) {
 function bootstrap_questions() {
   categories = Object.keys(questions());
   console.log(categories);
-  add_question("two_type", {responses : ["inspiring", "boring"], categories : ["test_survey", "set_A"]});
-  add_question("two_type", {responses : ["good", "bad"], categories : ["test_survey"]});
-  add_question("single_type", {responses : ["I really like this software."], categories : ["test_survey", "set_A"]});
-  add_question("single_type", {responses : ["I like the easter bunny."], categories : ["test_survey"]});
+  add_question("two_type_7", {responses : ["inspiring", "boring"], categories : ["test_survey", "set_A"]});
+  add_question("two_type_7", {responses : ["good", "bad"], categories : ["set_A"]});
+  add_question("single_type_7", {responses : ["I really like this software."], categories : ["test_survey", "set_B"]});
+  add_question("single_type_7", {responses : ["I like the easter bunny."], categories : ["test_survey", "set_B"]});
 
   for (type_index in categories) {
     var type = categories[type_index];
@@ -110,7 +110,7 @@ function bootstrap_questions() {
         categories: [type, "blub"]
       };
       console.log(question_parameters);
-      add_question("two_type", question_parameters);
+      add_question("two_type_5", question_parameters);
     }
   }
 }
@@ -212,7 +212,7 @@ function get_questions(category_name, limit, offset) {
 app.get('/questions', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking for questions");
-  res.json(get_questions("set_A"), 0, 0);
+  res.json(get_questions("set_B"), 0, 0);
 });
 
 app.get('/should_present_survey', function (req, res) {
