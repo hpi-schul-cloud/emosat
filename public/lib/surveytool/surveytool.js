@@ -150,7 +150,7 @@ function resize_survey_content(width, height) {
 function content_stage_2() {
   $(".title").text("Please help us improve by rating us according to the following criteria.");
   $.getJSON("/questions?" + get_sid_url_string() + get_role_url_string(), function (data) {
-    fill_survey(data);
+    fill_survey(data.questions);
     //fill_survey_partial(data.hedonic_quality, 3, 0);
     show_survey_table(true);
   });
