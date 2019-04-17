@@ -181,6 +181,15 @@ app.post('/admin/question', function (req, res, next) {
 
 });
 
+app.get('/admin/survey', function (req, res) {
+  // Endpoint to return all available questions from 
+  // the DB for admin purposes
+
+  var limit = req.query.limit || 10;
+  var offset = req.query.offset || 0;
+  res.json(get_surveys(limit, offset));
+});
+
 // Regular requests
 
 app.get("/session_id", function (req, res) {
@@ -197,6 +206,11 @@ function get_survey(survey_name) {
   var stmt = db.prepare("SELECT id, title FROM survey where name = ?");
   return stmt.all(survey_name);
 } 
+
+function get_surveys(limit, offset) {
+  var stmt = db.prepare("SELECT survey.id as id, survey.title as title, survey.name as name, count(1) as question_count FROM survey, survey_question where survey.id = survey_question.survey_id group by survey.id, survey.title, survey.name");
+  return stmt.all();
+}
 
 function get_questions(survey_name, category_name, limit, offset) {
   var survey_id = 0;
