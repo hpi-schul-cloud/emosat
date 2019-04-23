@@ -2,7 +2,7 @@ const express = require('express')
 const questions = require('./questions').word_pairs;
 
 const json2csv = require('json2csv').parse;
-const answer_fields = ['timestamp', 'session_id', 'option_left', 'option_right', 'value'];
+const answer_fields = ['timestamp', 'session_id', 'question_id', 'value'];
 const sentiment_fields = ['timestamp', 'session_id', 'sentiment'];
 
 const Database = require('better-sqlite3');
@@ -308,7 +308,7 @@ function get_questions(survey_name, category_name, limit, offset) {
       survey_title = survey_data[0].title;
       survey_filter = " ANd survey_question.survey_id = ? AND survey_question.question_id = t1.id";
       survey_from = "survey_question, ";
-      survery_order = "survey_question.position ASC, ";
+      survey_order = "survey_question.position ASC, ";
     }
     else {
       var error_text = "Survey " + survey_name + " was not found.";
@@ -342,7 +342,7 @@ function get_questions(survey_name, category_name, limit, offset) {
                                   t1.id = question_category.question_id \
                                 AnD \
                                   question_category.category_id = category.id " + category_filter + survey_filter + "\
-                          ORDER BY " + survery_order + "\
+                          ORDER BY " + survey_order + "\
                                   id ASC, \
                                   possible_response.question_order ASC;";
   var stmt = db.prepare(sql);
@@ -410,7 +410,7 @@ app.get('/should_present_survey', function (req, res) {
 app.post('/opt_out', function (req, res, next) {
   res.status(200);
   res.json({ success: true });
-  opt_out(session_id);
+  opt_out(req.body.session_id);
   console.log("(" + req.body.session_id + ") User opted out");
 });
 
@@ -434,23 +434,26 @@ function get_answers(session_id, single_value) {
                 INNER JOIN response \
                 ON t1.timestamp = response.timestamp \
                AND t1.session_id = response.session_id \
-               AND t1.question_id = response.question_id;";
+               AND t1.question_id = response.question_id\
+               ORDER BY t1.timestamp ASC;";
   }
   else {
     sql = "SELECT timestamp, \
                   session_id, \
-                  question_id \
-                  FROM response " + session_filter + ";";
+                  question_id, \
+                  value \
+                  FROM response " + session_filter + "\
+                  ORDER BY timestamp ASC;";
   }
   return db.prepare(sql).all(session_id !== undefined ? [session_id] : []);
 }
 
-function get_sentiments(external_session_id) {
-  var session_id = find_session_by_external_id(external_session_id, false);
-  var stmt = session_id !== false ?
+function get_sentiments(session_id) {
+  //var session_id = find_session_by_external_id(external_session_id, false);
+  var stmt = session_id !== undefined ?
     db.prepare("SELECT timestamp, session_id, sentiment FROM sentiment WHERE session_id = ?") :
     db.prepare("SELECT timestamp, session_id, sentiment FROM sentiment");
-  return session_id !== false ? stmt.all(session_id) : stmt.all();
+  return session_id !== undefined ? stmt.all(session_id) : stmt.all();
 }
 
 app.get('/results/answers/:format', function (req, res) {
