@@ -387,7 +387,18 @@ function get_questions(survey_name, category_name, limit, offset) {
 }
 
 app.get('/questions', function (req, res) {
+  var external_session_id = req.query.sid;
+  var session_id = find_session_by_external_id(external_session_id, false);
   console.log("(" + req.query.sid + ") Asking for questions");
+  
+  if (session_id == false) {
+    res.status(404);
+    res.json({"error" : "Session not found.", "status" : 404});
+    return;
+  }
+  
+  var answered_surveys = get_answered_surveys(session_id);
+  console.log("User has already answered surveys", answered_surveys)
   var data = get_questions("test_survey", undefined, 0, 0);
   res.status(data.status);
   res.json(data);
@@ -446,6 +457,17 @@ function get_answers(session_id, single_value) {
                   ORDER BY timestamp ASC;";
   }
   return db.prepare(sql).all(session_id !== undefined ? [session_id] : []);
+}
+
+function get_answered_surveys(session_id) {
+  sql = "SELECT survey_question.survey_id as survey_id, \
+                count(1) as answer_count \
+          FROM response, survey_question \
+          WHERE survey_question.question_id = response.question_id \
+            AND response.session_id = ? \
+          GROUP BY survey_id;";
+  var stmt = db.prepare(sql);
+  return stmt.all(session_id);
 }
 
 function get_sentiments(session_id) {
