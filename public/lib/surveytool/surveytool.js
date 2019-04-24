@@ -149,10 +149,20 @@ function resize_survey_content(width, height) {
 
 function content_stage_2() {
   $(".title").text("Please help us improve by rating us according to the following criteria.");
-  $.getJSON("/questions?" + get_sid_url_string() + get_role_url_string(), function (data) {
-    fill_survey(data.questions);
-    //fill_survey_partial(data.hedonic_quality, 3, 0);
-    show_survey_table(true);
+  var question_series_id = 1;
+  $.getJSON("/questions/" + question_series_id + "/?" + get_sid_url_string() + get_role_url_string(), function (data) {
+    if (data.success === true) {
+      fill_survey(data.questions);
+      show_survey_table(true);
+    }
+    else {
+      // If we cannot get data, we better hide.
+      console.log("No more surveys available for this session");
+      show_survey(false);
+    }
+  }).fail(function() {
+  console.log("An error occured while retrieving the next survey.");
+  show_survey(false);
   });
 }
 
@@ -169,7 +179,14 @@ function determine_survey_need() {
   $.getJSON(server_prefix + "/should_present_survey?" + get_sid_url_string() + get_role_url_string(), function (data) {
     if (data.present_survey) {
       setTimeout(function () {
-        show_survey(true);
+        if (data.starting_stage == 1) {
+          show_survey(true);
+        }
+        else {
+          proceed_survey();
+          show_survey(true);
+        }
+        
       }, data.timeout);
     }
   })
@@ -195,6 +212,14 @@ function init_survey(options) {
     opt_out();
   })
 
+  $(".complete-button").click(function () {
+    show_survey(false);
+    setTimeout(function() {
+      proceed_survey();
+      show_survey(true);
+    }, 1000)
+  })
+
   $(".survey_reaction").click(function () {
     publish_initial_sentiment($(this).hasClass("positive"));
     proceed_survey();
@@ -211,6 +236,9 @@ function survey_html_content() {
       <div class="icon"><i class="fa fa-poll-h"></i></div>
       <div class="close-button">
         <i class="fa fa-times"></i>
+      </div>
+      <div class="complete-button">
+        <i class="fa fa-check-circle"></i>
       </div>
       <h3 class="title">How is your learning journey so far?
         <div class="survey_reaction negative">👎</div>

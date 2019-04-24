@@ -114,6 +114,57 @@ function link_category_question(question_id, category_id) {
   stmt.run(question_id, category_id);
 }
 
+function get_highest_series_id() {
+  var id_stmt = db.prepare("SELECT max(id) AS max_id FROM series");
+  var result = id_stmt.all();
+  return result.length > 0 ? result[0].max_id : 0;
+}
+
+function create_series(name) {
+  var stmt = db.prepare("INSERT INTO series (name) VALUES (?)");
+  stmt.run(name);
+  return get_highest_series_id();
+}
+
+function get_next_position_in_series(series_id) {
+  var id_stmt = db.prepare("SELECT max(position) AS next_position FROM survey_series WHERE series_id = ?");
+  var result = id_stmt.all(series_id);
+  return result.length > 0 ? result[0].max_id + 1 : 1;
+}
+
+function add_survey_to_series(series_id, survey_id) {
+  var next_position = get_next_position_in_series(series_id);
+
+  var stmt = db.prepare("INSERT INTO survey_series (survey_id, series_id, position) VALUES (?, ?, ?)");
+  stmt.run(survey_id, series_id, next_position);
+}
+
+function get_series(series_id) {
+  var series_stmt = db.prepare("SELECT name FROM series WHERE id = ?");
+  var series_data = series_stmt.all(series_id);
+  if (series_data.length > 0) {
+    // We've got actual data here
+    var stmt = db.prepare("SELECT survey_id, position FROM survey_series WHERE series_id = ? ORDER BY position ASC");
+    var surveys = stmt.all(series_id);
+    var survey_id_list = []
+    for (var row_id in surveys) {
+      survey_id_list.push(surveys[row_id].survey_id);
+    }
+    return {
+            "success" : true, 
+            "surveys" : survey_id_list
+           };
+  }
+  else {
+    // The series does not exist at all
+    return {
+            "success" : false, 
+            "error" : "Series with ID " + series_id + " was not found.", 
+            "surveys" : []
+          };
+  }
+}
+
 function add_category_for_question(question_id, category_name) {
   var category_id = add_category(category_name);
   link_category_question(question_id, category_id);
@@ -123,11 +174,21 @@ function bootstrap_questions() {
   categories = Object.keys(questions());
   console.log(categories);
   var test_survey_id = create_survey("test_survey", "The TEST survey");
+  var second_test_survey_id = create_survey("evaluation_survey", "The EVALUATION survey");
+
   var question1 = add_question("two_type_7", { responses: ["inspiring", "boring"], categories: ["funny_questions"] });
   var question2 = add_question("two_type_7", { responses: ["good", "bad"], categories: ["set_A"] });
+  var question3 = add_question("two_type_7", { responses: ["creative", "old"], categories: [""] });
+  var question4 = add_question("two_type_7", { responses: ["intelligent", "dumb"], categories: [""] });
 
   add_question_to_survey(test_survey_id, question1);
   add_question_to_survey(test_survey_id, question2);
+  add_question_to_survey(second_test_survey_id, question3);
+  add_question_to_survey(second_test_survey_id, question4);
+
+  var default_series_id = create_series("Default Series");
+  add_survey_to_series(default_series_id, test_survey_id);
+  add_survey_to_series(default_series_id, second_test_survey_id);
 
   add_question("single_type_7", { responses: ["I really like this software."], categories: ["test_survey", "set_B"] });
   add_question("single_type_7", { responses: ["I like the easter bunny."], categories: ["test_survey", "set_B"] });
@@ -189,6 +250,8 @@ function find_session_by_external_id(external_id, create_if_not_exists) {
 
 function init_survey() {
   if (!table_exists("survey")) {
+    db.prepare("CREATE TABLE IF NOT EXISTS series (id INTEGER PRIMARY KEY, name TEXT)").run();
+    db.prepare("CREATE TABLE IF NOT EXISTS survey_series (id INTEGER PRIMARY KEY, survey_id INTEGER, series_id INTEGER, position INTEGER)").run();
     db.prepare("CREATE TABLE IF NOT EXISTS survey (id INTEGER PRIMARY KEY, name TEXT, title TEXT)").run();
     db.prepare("CREATE TABLE IF NOT EXISTS survey_question (id INTEGER PRIMARY KEY, survey_id INTEGER, question_id INTEGER, position INTEGER)").run();
   }
@@ -216,8 +279,7 @@ function opt_out(external_session_id) {
   );
 }
 
-function has_opted_out(external_session_id) {
-  var session_id = find_session_by_external_id(external_session_id, true);
+function has_opted_out(session_id) {
   var stmt = db.prepare("SELECT 1 FROM opt_out WHERE session_id = ?");
   console.log(stmt, session_id);
   var rows = stmt.all(session_id);
@@ -282,9 +344,14 @@ function get_answers_for_question(question_id) {
   return stmt.all(question_id);
 }
 
-function get_survey(survey_name) {
+function get_survey_by_name(survey_name) {
   var stmt = db.prepare("SELECT id, title FROM survey where name = ?");
   return stmt.all(survey_name);
+}
+
+function get_survey(survey_id) {
+  var stmt = db.prepare("SELECT id, title FROM survey where id = ?");
+  return stmt.all(survey_id);
 }
 
 function get_surveys(limit, offset) {
@@ -292,19 +359,19 @@ function get_surveys(limit, offset) {
   return stmt.all();
 }
 
-function get_questions(survey_name, category_name, limit, offset) {
-  var survey_id = 0;
+function get_questions(survey_id, category_name, limit, offset) {
   var survey_filter = "";
   var survey_from = "";
   var survey_title = "";
   var survey_order = "";
+  var survey_name = "";
 
-  if (survey_name !== undefined) {
+  if (survey_id !== undefined) {
 
-    var survey_data = get_survey(survey_name);
+    var survey_data = get_survey(survey_id);
     console.log(survey_data);
     if (survey_data.length > 0) {
-      survey_id = survey_data[0].id;
+      survey_name = survey_data[0].name;
       survey_title = survey_data[0].title;
       survey_filter = " ANd survey_question.survey_id = ? AND survey_question.question_id = t1.id";
       survey_from = "survey_question, ";
@@ -377,6 +444,7 @@ function get_questions(survey_name, category_name, limit, offset) {
   }
 
   return {
+    success : true,
     questions: result,
     survey_title: survey_title,
     survey_id: survey_id,
@@ -386,10 +454,34 @@ function get_questions(survey_name, category_name, limit, offset) {
 
 }
 
-app.get('/questions', function (req, res) {
+function select_next_survey(session_id, series_id) {
+  // Either return the ID of the next survey to take or -1
+  // if nothing could be selected
+
+  var answered_surveys = get_answered_surveys(session_id);
+  var answered_survey_ids = [];
+  for (var entry_id in answered_surveys) {
+    answered_survey_ids.push(answered_surveys[entry_id].survey_id);
+  }
+  console.log("Answered surveys: ", answered_survey_ids)
+
+  var series_data = get_series(series_id);
+
+  console.log(series_data);
+  for (var survey_index in series_data.surveys) {
+    if (!answered_survey_ids.includes(series_data.surveys[survey_index])) {
+      return series_data.surveys[survey_index];
+    }
+  }
+  return -1;
+}
+
+app.get('/questions/:series', function (req, res) {
   var external_session_id = req.query.sid;
   var session_id = find_session_by_external_id(external_session_id, false);
-  console.log("(" + req.query.sid + ") Asking for questions");
+  var series_id = req.params.series
+
+  console.log("(" + req.query.sid + ") Asking for questions from series", series_id);
   
   if (session_id == false) {
     res.status(404);
@@ -397,19 +489,30 @@ app.get('/questions', function (req, res) {
     return;
   }
   
-  var answered_surveys = get_answered_surveys(session_id);
-  console.log("User has already answered surveys", answered_surveys)
-  var data = get_questions("test_survey", undefined, 0, 0);
-  res.status(data.status);
-  res.json(data);
+  var next_survey_id = select_next_survey(session_id, series_id);
+  console.log("Next survey: ", next_survey_id);
+  if (next_survey_id > 0) {
+    var data = get_questions(next_survey_id, undefined, 0, 0);
+    res.status(data.status);
+    res.json(data);
+  }
+  else {
+    res.status(200);
+    res.json({success : false, error : "No more surveys available for this session ID"});
+  }
 });
 
 app.get('/should_present_survey', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking whether to present survey");
-  var opt_out = has_opted_out(req.query.sid);
+  var session_id = find_session_by_external_id(req.query.sid, true);
+  var opt_out = has_opted_out(session_id);
   if (!opt_out) {
-    res.json({ "present_survey": true, "timeout": 1000 });
+    var answered_surveys = get_answered_surveys(session_id);
+    res.json({ 
+                "present_survey": true, 
+                "timeout": 1000, 
+                "starting_stage" : answered_surveys.length == 0 ? 1 : 2});
     console.log("(" + req.query.sid + ") We're good to go.");
   }
   else {
