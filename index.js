@@ -92,9 +92,8 @@ function add_category(name) {
     var category_stmt = db.prepare("INSERT INTO category (name) VALUES (?)");
     category_stmt.run(name);
     category_id = category_exists(name);
+    console.log("Created category \"" + name + "\"(ID " + category_id + ")");
   }
-
-  console.log("Created category", category_id);
   return category_id;
 }
 
@@ -151,17 +150,17 @@ function get_series(series_id) {
       survey_id_list.push(surveys[row_id].survey_id);
     }
     return {
-            "success" : true, 
-            "surveys" : survey_id_list
-           };
+      "success": true,
+      "surveys": survey_id_list
+    };
   }
   else {
     // The series does not exist at all
     return {
-            "success" : false, 
-            "error" : "Series with ID " + series_id + " was not found.", 
-            "surveys" : []
-          };
+      "success": false,
+      "error": "Series with ID " + series_id + " was not found.",
+      "surveys": []
+    };
   }
 }
 
@@ -171,8 +170,6 @@ function add_category_for_question(question_id, category_name) {
 }
 
 function bootstrap_questions() {
-  categories = Object.keys(questions());
-  console.log(categories);
   var test_survey_id = create_survey("test_survey", "The TEST survey");
   var second_test_survey_id = create_survey("evaluation_survey", "The EVALUATION survey");
 
@@ -193,18 +190,45 @@ function bootstrap_questions() {
   add_question("single_type_7", { responses: ["I really like this software."], categories: ["test_survey", "set_B"] });
   add_question("single_type_7", { responses: ["I like the easter bunny."], categories: ["test_survey", "set_B"] });
 
-  for (type_index in categories) {
-    var type = categories[type_index];
+  var survey_template_keys = Object.keys(questions());
 
-    for (var i in questions()[type]) {
-      var question_parameters = {
-        responses: questions()[type][i],
-        categories: [type, "blub"]
-      };
-      console.log(question_parameters);
-      add_question("two_type_5", question_parameters);
+  for (i in survey_template_keys) {
+    var survey_template_name = survey_template_keys[i];
+    var entry = questions()[survey_template_name]
+    var available_languages = Object.keys(entry)
+    for (var language_index in available_languages) {
+      var language = available_languages[language_index];
+      var survey_id = create_survey(survey_template_name, entry[language].title);
+      console.log("Survey \"" + entry[language].title + "\" created with ID " + survey_id);
+      var question_parameters = {}
+      if (entry[language].type == "two_type_7" || entry[language].type == "two_type_5") {
+        for (var i in entry[language].pairs) {
+          question_parameters = {
+            responses: entry[language].pairs[i],
+            categories: [survey_template_name, language]
+          };
+          var question_id = add_question(entry[language].type, question_parameters);
+          add_question_to_survey(survey_id, question_id);
+        }
+      }
+      else if (entry[language].type == "single_type_7" || entry[language].type == "single_type_5") {
+        for (var i in entry[language].sentiments) {
+          question_parameters = {
+            responses: [entry[language].sentiments[i]],
+            categories: [survey_template_name, language]
+          };
+          var question_id = add_question(entry[language].type, question_parameters);
+          add_question_to_survey(survey_id, question_id);
+        }
+      }
     }
   }
+  var en_series_id = create_series("English Series");
+  add_survey_to_series(en_series_id, 3);
+  add_survey_to_series(en_series_id, 5);
+  var de_series_id = create_series("German Series");
+  add_survey_to_series(de_series_id, 4);
+  add_survey_to_series(de_series_id, 6);
 }
 
 function init_session_storage() {
@@ -444,7 +468,7 @@ function get_questions(survey_id, category_name, limit, offset) {
   }
 
   return {
-    success : true,
+    success: true,
     questions: result,
     survey_title: survey_title,
     survey_id: survey_id,
@@ -482,13 +506,13 @@ app.get('/questions/:series', function (req, res) {
   var series_id = req.params.series
 
   console.log("(" + req.query.sid + ") Asking for questions from series", series_id);
-  
+
   if (session_id == false) {
     res.status(404);
-    res.json({"error" : "Session not found.", "status" : 404});
+    res.json({ "error": "Session not found.", "status": 404 });
     return;
   }
-  
+
   var next_survey_id = select_next_survey(session_id, series_id);
   console.log("Next survey: ", next_survey_id);
   if (next_survey_id > 0) {
@@ -498,7 +522,7 @@ app.get('/questions/:series', function (req, res) {
   }
   else {
     res.status(200);
-    res.json({success : false, error : "No more surveys available for this session ID"});
+    res.json({ success: false, error: "No more surveys available for this session ID" });
   }
 });
 
@@ -509,10 +533,11 @@ app.get('/should_present_survey', function (req, res) {
   var opt_out = has_opted_out(session_id);
   if (!opt_out) {
     var answered_surveys = get_answered_surveys(session_id);
-    res.json({ 
-                "present_survey": true, 
-                "timeout": 1000, 
-                "starting_stage" : answered_surveys.length == 0 ? 1 : 2});
+    res.json({
+      "present_survey": true,
+      "timeout": 1000,
+      "starting_stage": answered_surveys.length == 0 ? 1 : 2
+    });
     console.log("(" + req.query.sid + ") We're good to go.");
   }
   else {

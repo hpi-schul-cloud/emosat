@@ -149,7 +149,7 @@ function resize_survey_content(width, height) {
 
 function content_stage_2() {
   $(".title").text("Please help us improve by rating us according to the following criteria.");
-  var question_series_id = 1;
+  var question_series_id = 2;
   $.getJSON("/questions/" + question_series_id + "/?" + get_sid_url_string() + get_role_url_string(), function (data) {
     if (data.success === true) {
       fill_survey(data.questions);
