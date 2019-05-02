@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1578px" height="887px" viewBox="0 0 1578 887" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>ER diagram</title>
+    <desc>Created with Sketch.</desc>
+    <g id="ER-diagram" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="#FFFFFF" x="0" y="0" width="1578" height="887"></rect>
+        <rect id="Rectangle" stroke="#979797" fill="#D8D8D8" x="1313.5" y="297.5" width="95" height="46"></rect>
+        <rect id="Rectangle-Copy" stroke="#979797" fill="#D8D8D8" x="945.5" y="102.5" width="95" height="46"></rect>
+        <rect id="Rectangle-Copy-2" stroke="#979797" fill="#D8D8D8" x="498.5" y="294.5" width="95" height="46"></rect>
+        <rect id="Rectangle-Copy-3" stroke="#979797" fill="#D8D8D8" x="498.5" y="480.5" width="95" height="46"></rect>
+        <rect id="Rectangle-Copy-8" stroke="#979797" fill="#D8D8D8" x="944.5" y="479.5" width="95" height="46"></rect>
+        <rect id="Rectangle-Copy-14" stroke="#979797" fill="#D8D8D8" x="1309.5" y="480.5" width="95" height="46"></rect>
+        <rect id="Rectangle-Copy-10" stroke="#979797" fill="#D8D8D8" x="943.5" y="297.5" width="95" height="46"></rect>
+        <rect id="Rectangle-Copy-6" stroke="#979797" fill="#D8D8D8" x="498.5" y="714.5" width="95" height="46"></rect>
+        <rect id="Rectangle-Copy-4" stroke="#979797" fill="#D8D8D8" x="179.5" y="478.5" width="115" height="46"></rect>
+        <text id="opt_out" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1341.48145" y="324">opt_out</tspan>
+        </text>
+        <text id="sentiment" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="967.487305" y="129">sentiment</tspan>
+        </text>
+        <text id="response" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="522.317383" y="321">response</tspan>
+        </text>
+        <text id="question" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="524.31543" y="507">question</tspan>
+        </text>
+        <text id="survey" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="975.328125" y="506">survey</tspan>
+        </text>
+        <text id="series" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1342.49512" y="507">series</tspan>
+        </text>
+        <path d="M1040,505.774603 L1309,505.774603" id="Line-36" stroke="#979797" stroke-linecap="square"></path>
+        <text id="session" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="971.15625" y="324">session</tspan>
+        </text>
+        <text id="category" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="524.487305" y="741">category</tspan>
+        </text>
+        <text id="possible_response" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="187.466797" y="505">possible_response</tspan>
+        </text>
+        <ellipse id="Oval" stroke="#979797" fill="#D8D8D8" cx="1491" cy="331" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-32" stroke="#979797" fill="#D8D8D8" cx="1150" cy="603" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-33" stroke="#979797" fill="#D8D8D8" cx="1265" cy="629" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-29" stroke="#979797" fill="#D8D8D8" cx="1284" cy="561" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-30" stroke="#979797" fill="#D8D8D8" cx="1483" cy="463" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-2" stroke="#979797" fill="#D8D8D8" cx="1123" cy="136" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-26" stroke="#979797" fill="#D8D8D8" cx="897" cy="256" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-5" stroke="#979797" fill="#D8D8D8" cx="417" cy="389" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-9" stroke="#979797" fill="#D8D8D8" cx="638" cy="564" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-19" stroke="#979797" fill="#D8D8D8" cx="1020" cy="627" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-27" stroke="#979797" fill="#D8D8D8" cx="1281" cy="432" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-31" stroke="#979797" fill="#D8D8D8" cx="1488" cy="541" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-22" stroke="#979797" fill="#D8D8D8" cx="895" cy="450" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-15" stroke="#979797" fill="#D8D8D8" cx="676" cy="626" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-14" stroke="#979797" fill="#D8D8D8" cx="484" cy="818" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-16" stroke="#979797" fill="#D8D8D8" cx="644" cy="830" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-11" stroke="#979797" fill="#D8D8D8" cx="137" cy="445" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy" stroke="#979797" fill="#D8D8D8" cx="1440" cy="256" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-3" stroke="#979797" fill="#D8D8D8" cx="1072" cy="61" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-24" stroke="#979797" fill="#D8D8D8" cx="1091" cy="262" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-25" stroke="#979797" fill="#D8D8D8" cx="1113" cy="377" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-6" stroke="#979797" fill="#D8D8D8" cx="625" cy="253" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-10" stroke="#979797" fill="#D8D8D8" cx="659" cy="461" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-20" stroke="#979797" fill="#D8D8D8" cx="873" cy="594" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-23" stroke="#979797" fill="#D8D8D8" cx="813" cy="650" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-21" stroke="#979797" fill="#D8D8D8" cx="1036" cy="433" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-12" stroke="#979797" fill="#D8D8D8" cx="213" cy="581" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-4" stroke="#979797" fill="#D8D8D8" cx="920" cy="61" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-7" stroke="#979797" fill="#D8D8D8" cx="473" cy="253" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-17" stroke="#979797" fill="#D8D8D8" cx="431" cy="592" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-18" stroke="#979797" fill="#D8D8D8" cx="431" cy="658" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-13" stroke="#979797" fill="#D8D8D8" cx="87" cy="526" rx="58" ry="24"></ellipse>
+        <ellipse id="Oval-Copy-8" stroke="#979797" fill="#D8D8D8" cx="396" cy="317" rx="58" ry="24"></ellipse>
+        <text id="timestamp" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1463.32617" y="334">timestamp</tspan>
+        </text>
+        <text id="survey_id-copy" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1124.32129" y="606">survey_id</tspan>
+        </text>
+        <text id="series_id" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1241.48828" y="632">series_id</tspan>
+        </text>
+        <text id="position" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1263.31934" y="564">position</tspan>
+        </text>
+        <text id="name" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1467.49121" y="466">name</tspan>
+        </text>
+        <path d="M1433,474 L1405,494" id="Line-37" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1199,459.5 L1239.5,448.531963" id="Line-38" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1430,540 L1405,517" id="Line-40" stroke="#979797" stroke-linecap="square"></path>
+        <text id="timestamp-copy" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1095.32617" y="139">timestamp</tspan>
+        </text>
+        <text id="timestamp-copy-3" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="869.326172" y="259">timestamp</tspan>
+        </text>
+        <path d="M955.234019,297 L925.5,277" id="Line-35" stroke="#979797" stroke-linecap="square"></path>
+        <text id="timestamp-copy-2" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="389.326172" y="392">timestamp</tspan>
+        </text>
+        <text id="id" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000" text-decoration="underline">
+            <tspan x="633.330078" y="567">id</tspan>
+        </text>
+        <text id="id-copy-4" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000" text-decoration="underline">
+            <tspan x="1015.33008" y="630">id</tspan>
+        </text>
+        <text id="id-copy-6" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000" text-decoration="underline">
+            <tspan x="1276.33008" y="435">id</tspan>
+        </text>
+        <path d="M1229.5,553 L1213.5,537" id="Line-39" stroke="#979797" stroke-linecap="square"></path>
+        <text id="id-copy-7" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000" text-decoration="underline">
+            <tspan x="1483.33008" y="544">id</tspan>
+        </text>
+        <text id="id-copy-5" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000" text-decoration="underline">
+            <tspan x="890.330078" y="453">id</tspan>
+        </text>
+        <text id="id-copy-3" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000" text-decoration="underline">
+            <tspan x="671.330078" y="629">id</tspan>
+        </text>
+        <text id="id-copy-2" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000" text-decoration="underline">
+            <tspan x="479.330078" y="821">id</tspan>
+        </text>
+        <text id="name" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="628.491211" y="833">name</tspan>
+        </text>
+        <text id="id-copy" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000" text-decoration="underline">
+            <tspan x="132.330078" y="448">id</tspan>
+        </text>
+        <text id="session_id" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1412.14941" y="259">session_id</tspan>
+        </text>
+        <text id="session_id-copy" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1044.14941" y="64">session_id</tspan>
+        </text>
+        <text id="id-[INTEGER]" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1087.83008" y="259" text-decoration="underline">id</tspan>
+            <tspan x="1062.49707" y="273">[INTEGER]</tspan>
+        </text>
+        <text id="external_id-[TEXT]" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1084.14746" y="375">external_id</tspan>
+            <tspan x="1094.83203" y="389">[TEXT]</tspan>
+        </text>
+        <path d="M1036,343.5 L1066,363.5" id="Line-29" stroke="#979797" stroke-linecap="square"></path>
+        <text id="session_id-copy-2" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="597.149414" y="256">session_id</tspan>
+        </text>
+        <text id="type" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="648.15918" y="464">type</tspan>
+        </text>
+        <path d="M586.5,480 L605.5,470.5" id="Line-19" stroke="#979797" stroke-linecap="square"></path>
+        <text id="position" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="853.319336" y="597">position</tspan>
+        </text>
+        <text id="question_id" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="783.308594" y="653">question_id</tspan>
+        </text>
+        <path d="M800.225397,569.225397 L806.5,626" id="Line-8" stroke="#979797" stroke-linecap="square"></path>
+        <text id="title" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1027.16309" y="436">title</tspan>
+        </text>
+        <text id="text" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="204.329102" y="584">text</tspan>
+        </text>
+        <text id="sentiment-[TEXT]" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="894.487305" y="59">sentiment</tspan>
+            <tspan x="901.832031" y="73">[TEXT]</tspan>
+        </text>
+        <text id="question_id" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="443.308594" y="256">question_id</tspan>
+        </text>
+        <text id="question_id-copy" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="401.308594" y="595">question_id</tspan>
+        </text>
+        <text id="category_id" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="401.480469" y="661">category_id</tspan>
+        </text>
+        <text id="question_order" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="47.4716797" y="529">question_order</tspan>
+        </text>
+        <text id="value-[INTEGER]" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="381.15625" y="314">value</tspan>
+            <tspan x="365.49707" y="328">[INTEGER]</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#D8D8D8" transform="translate(547.234019, 414.234019) rotate(45.000000) translate(-547.234019, -414.234019) " x="524.234019" y="391.234019" width="46" height="46"></rect>
+        <rect id="Rectangle-Copy-11" stroke="#979797" fill="#D8D8D8" transform="translate(767.234019, 320.234019) rotate(45.000000) translate(-767.234019, -320.234019) " x="744.234019" y="297.234019" width="46" height="46"></rect>
+        <rect id="Rectangle-Copy-12" stroke="#979797" fill="#D8D8D8" transform="translate(992.234019, 215.234019) rotate(45.000000) translate(-992.234019, -215.234019) " x="969.234019" y="192.234019" width="46" height="46"></rect>
+        <rect id="Rectangle-Copy-13" stroke="#979797" fill="#D8D8D8" transform="translate(1183.234019, 320.234019) rotate(45.000000) translate(-1183.234019, -320.234019) " x="1160.23402" y="297.234019" width="46" height="46"></rect>
+        <rect id="Rectangle-Copy-7" stroke="#979797" fill="#D8D8D8" transform="translate(546.225397, 624.225397) rotate(45.000000) translate(-546.225397, -624.225397) " x="502.725397" y="580.725397" width="87" height="87"></rect>
+        <rect id="Rectangle-Copy-9" stroke="#979797" fill="#D8D8D8" transform="translate(800.225397, 507.225397) rotate(45.000000) translate(-800.225397, -507.225397) " x="756.725397" y="463.725397" width="87" height="87"></rect>
+        <rect id="Rectangle-Copy-15" stroke="#979797" fill="#D8D8D8" transform="translate(1184.225397, 506.225397) rotate(45.000000) translate(-1184.225397, -506.225397) " x="1140.7254" y="462.725397" width="87" height="87"></rect>
+        <text id="question_category" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="495.46582" y="627">question_category</tspan>
+        </text>
+        <text id="survey_question" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="755.306641" y="510">survey_question</tspan>
+        </text>
+        <text id="survey_series" font-family="ArialMT, Arial" font-size="12" font-weight="normal" fill="#000000">
+            <tspan x="1146.48633" y="509">survey_series</tspan>
+        </text>
+        <rect id="Rectangle-Copy-5" stroke="#979797" fill="#D8D8D8" transform="translate(391.234019, 508.234019) rotate(45.000000) translate(-391.234019, -508.234019) " x="368.234019" y="485.234019" width="46" height="46"></rect>
+        <path d="M547,341 L547,381" id="Line" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M547,447.468037 L547.234019,480" id="Line-2" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M424.468037,508 L498,508" id="Line-3" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M862.450793,508 L944,507" id="Line-3-Copy-2" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M295,508 L358,508" id="Line-3-Copy" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M594,507 L738,506.531963" id="Line-3-Copy-3" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M546.5,527 L546,562" id="Line-4" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M546,686.450793 L546,714" id="Line-5" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M827.5,541 L855.450793,571" id="Line-6" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1016.5,526 L1020,603.225397" id="Line-6-Copy" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1040,457 L1005.5,479" id="Line-7" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M829,473 L846.5,463.734019" id="Line-9" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M544.5,761 L495,793.531963" id="Line-10" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M641.5,806 L574.5,761" id="Line-11" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M489,595 L507.5,602" id="Line-12" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M508,646.5 L489,655.5" id="Line-13" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M564,527 L597,547" id="Line-14" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M608.450793,624.225397 L618,624.225397" id="Line-15" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M215,478 L189.5,456" id="Line-16" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M145,525 L179,511.5" id="Line-17" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M218.5,525 L215,557" id="Line-18" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M448.5,368 L498.5,334" id="Line-20" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M572.5,294 L591,272.5" id="Line-21" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M498.5,275.5 L509.5,294" id="Line-22" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M454,317.5 L498.5,317.5" id="Line-23" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M950.5,81 L967,102" id="Line-24" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1020,102 L1051,83.5" id="Line-25" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1039,303 L1070,284.5" id="Line-25-Copy" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1041,128 L1065,133.5" id="Line-26" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1361.5,297 L1400.5,273.5" id="Line-27" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1409,327 L1433,330" id="Line-28" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M734,320.404297 L594,320.404297" id="Line-30" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M943,320.404297 L799,320.404297" id="Line-30-Copy" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1151,320 L1039,320" id="Line-31" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1216.46804,320 L1313,320" id="Line-32" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M992.234019,182 L992.234019,149" id="Line-33" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M992.234019,247.404297 L992.234019,297" id="Line-34" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1161.5,579.450793 L1171,555.404297" id="Line-41" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M1207,547 L1230,609" id="Line-42" stroke="#979797" stroke-linecap="square"></path>
+    </g>
+</svg>
