@@ -40,6 +40,33 @@ In your JS code, call `init_survey({div_name: "my_survey_div"});`. Optionally, y
 
 If the survey server's request URL needs to be adapted, e.g. because it is running behind a reverse proxy, use `init_survey({div_name: "my_survey_div", server_prefix: "/surveytool"});`
 
+## Adding questions
+
+A survey might consist of multiple questions. A series of surveys can be created, so that the individual surveys are presented to the user in a pre-defined order:
+
+```javascript
+  // Create a new survey
+  var test_survey_id = create_survey("test_survey", "The TEST survey");
+
+  // Create a new question
+  var question_id = add_question("two_type_7", { 
+      responses: ["inspiring", "boring"], 
+      categories: ["funny_questions"] 
+    });
+  
+  // Add the question to the survey
+  add_question_to_survey(test_survey_id, question_id);
+
+  // Create a new series
+  var default_series_id = create_series("Default Series");
+  // Add the survey to the series
+  add_survey_to_series(default_series_id, test_survey_id);
+  ```
+
+There are currently four different questions types available: `single_type_5` (A single statement with five options to rate it) and `two_type_5` (two words/word groups with five options between them), as well as `single_type_7` and `two_type_7` which are like the types before, but with seven options to pick from.
+
+Each question can be tagged with categories, which can later be used for evaluation. The backend also allows to retrieve all questions of a certain category.
+
 ## Endpoints for evaluation
 `/results/answers/json` and `/results/answers/csv` resturn the answers for the individual questions as JSON and respectively CSV. Same applies for `/results/sentiments/json` and `/results/sentiments/csv`, which contain the initial user sentiment.
 
