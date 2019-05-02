@@ -1,6 +1,23 @@
 # emosat
 Measuring LX
 
+## Background 
+In our surveys, all user experience aspects have been rated between -3 and 3. We calculated the mean value of all aspects. For both platforms, Schul-Cloud and openHPI, we extracted all important items, i.e., with a mean value higher than 1.5.
+
+Martin Schrepp lists all relevant questionnaires in his book "User Experience mit Fragebögen messen" (2018). Unfortunately, there is no questionnaire that covers all aspects rated as important for Schul-Cloud and openHPI. Therefore, we decided to combine different questionnaires: 
+(1) User Experience Questionnaire (UEQ, complete), 
+(2) meCUE (only module 1) and 
+(3) VisAWI-S (complete short version).
+
+We concentrated us on questionnaires that (a) have been developed within several iterations, (b) are available for free, including information about the evaluation, and (c) wouldn't claim too much from regular users of Schul-Cloud and openHPI (not being in a testing environment). The table below shows all items of openHPI that have been rated > 1.5 sorted in a descending order. They include all Schul-Cloud items that have been rated > 1.5, too. It gives an short overview which aspects are covered through which questionnaires based on the information given by Schrepp. 
+
+![research-questionnaires](documentation/overview-questionnaires.png "Overview Questionnaires")
+
+For all information about the surveys and their results, please have a look at the paper "Importance of UX Aspects for Learning Environments" by Mandy Klingbeil, Dominik Bruechner and Jan Renz.
+
+## ER Diagram
+![er-diagram](documentation/ER-diagram.svg "ER Diagram")
+
 ## Running
 Execute `npm install` first, then run the project with `node index.js`. It will then run on the default port 3000. If you want to specify a different port, use the command line option `--port`, e.g. `node index.js --port 5000`. Please note that for privileged ports (<1024) you need the according privileges, otherwise the execution will fail.
 
