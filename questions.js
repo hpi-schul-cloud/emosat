@@ -117,7 +117,7 @@ function word_pairs() {
       "Everything goes together on this site.",
       "The layout is pleasantly varied.",
       "The color composition is attractive.",
-      "The layout appears professionally designed"
+      "The layout appears professionally designed."
     ],
     "options": [
       "strongly disagree",
@@ -158,6 +158,10 @@ function word_pairs() {
     "VisAWIs": {
       "en": VisAWIs_en,
       "de": VisAWIs_de
+    },
+    "meCUE": {
+      "en": meCUE_en,
+      "de": meCUE_de
     }
   }
 }
