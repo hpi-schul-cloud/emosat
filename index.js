@@ -224,9 +224,11 @@ function bootstrap_questions() {
     }
   }
   var en_series_id = create_series("English Series");
+  add_survey_to_series(en_series_id, 7);
   add_survey_to_series(en_series_id, 3);
   add_survey_to_series(en_series_id, 5);
   var de_series_id = create_series("German Series");
+  add_survey_to_series(en_series_id, 8);
   add_survey_to_series(de_series_id, 4);
   add_survey_to_series(de_series_id, 6);
 }
@@ -239,19 +241,22 @@ function init_session_storage() {
 
 function create_session(external_id) {
   if (external_id == undefined) {
+    console.log("No external ID provided")
     external_id = uuidv1();
   }
   else if (session_exists(external_id)) {
+    console.log("Session already exists")
     return external_id;
   }
 
+  console.log("Inserting into DB")
   var stmt = db.prepare("INSERT INTO session (external_id, timestamp) VALUES (?, ?)");
   stmt.run(external_id, + new Date());
   return external_id;
 }
 
 function session_exists(external_id) {
-  return (find_session_by_external_id !== false);
+  return (find_session_by_external_id(external_id, false) !== false);
 }
 
 function find_session_by_external_id(external_id, create_if_not_exists) {
@@ -260,6 +265,7 @@ function find_session_by_external_id(external_id, create_if_not_exists) {
   console.log(rows);
   if (rows.length == 0) {
     if (create_if_not_exists == true) {
+      console.log("Creating Session")
       create_session(external_id);
       return find_session_by_external_id(external_id, false);
     }
@@ -502,7 +508,7 @@ function select_next_survey(session_id, series_id) {
 
 app.get('/questions/:series', function (req, res) {
   var external_session_id = req.query.sid;
-  var session_id = find_session_by_external_id(external_session_id, false);
+  var session_id = find_session_by_external_id(external_session_id, true);
   var series_id = req.params.series
 
   console.log("(" + req.query.sid + ") Asking for questions from series", series_id);
