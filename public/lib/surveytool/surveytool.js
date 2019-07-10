@@ -148,9 +148,9 @@ function resize_survey_content(width, height) {
 }
 
 function content_stage_2() {
-  $(".title").text("Please help us improve by rating us according to the following criteria.");
+  $(".surveytool-title").text("Please help us improve by rating us according to the following criteria.");
   var question_series_id = 2;
-  $.getJSON("/questions/" + question_series_id + "/?" + get_sid_url_string() + get_role_url_string(), function (data) {
+  $.getJSON(server_prefix + "/questions/" + question_series_id + "/?" + get_sid_url_string() + get_role_url_string(), function (data) {
     if (data.success === true) {
       fill_survey(data.questions);
       show_survey_table(true);
@@ -240,7 +240,7 @@ function survey_html_content() {
       <div class="complete-button">
         <i class="fa fa-check-circle"></i>
       </div>
-      <h3 class="title">How is your learning journey so far?
+      <h3 class="surveytool-title">How is your learning journey so far?
         <div class="survey_reaction negative">👎</div>
         <div class="survey_reaction positive">👍</div>
       </h3>
