@@ -1,4 +1,7 @@
 # emosat
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/schul-cloud/emosat.svg)](https://greenkeeper.io/)
+
 Measuring LX
 
 ## Background 
