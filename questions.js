@@ -89,7 +89,7 @@ function word_pairs() {
   }
 
   var meCUE_de = {
-    "type" : "two_type_7",
+    "type" : "single_type_7",
     "title" : "meCUE 2.0 (de)",
     "sentiments": [
       "Das Produkt lässt sich einfach benutzen.",
