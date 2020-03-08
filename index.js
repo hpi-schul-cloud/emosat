@@ -25,6 +25,7 @@ const port = (options.port != undefined) ? options.port : 3000;
 
 function init_database() {
   db.prepare("CREATE TABLE IF NOT EXISTS opt_out (timestamp INTEGER, session_id INTEGER)").run();
+  db.prepare("CREATE TABLE IF NOT EXISTS nps (timestamp INTEGER, session_id INTEGER, sentiment INTEGER)").run();
   db.prepare("CREATE TABLE IF NOT EXISTS sentiment (timestamp INTEGER, session_id INTEGER, sentiment TEXT)").run();
   db.prepare("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id INTEGER, question_id INTEGER, value INTEGER)").run();
   init_session_storage();
@@ -316,6 +317,15 @@ function has_opted_out(session_id) {
   return (rows.length > 0);
 }
 
+function process_nps(external_session_id, nps) {
+  var stmt = db.prepare("INSERT INTO nps VALUES (?, ?, ?)");
+  var session_id = find_session_by_external_id(external_session_id, true);
+  stmt.run(
+    + new Date(),
+    session_id,
+    nps);
+}
+
 function process_initial_sentiment(external_session_id, sentiment) {
   var stmt = db.prepare("INSERT INTO sentiment VALUES (?, ?, ?)");
   var session_id = find_session_by_external_id(external_session_id, true);
@@ -557,6 +567,13 @@ app.post('/opt_out', function (req, res, next) {
   res.json({ success: true });
   opt_out(req.body.session_id);
   console.log("(" + req.body.session_id + ") User opted out");
+});
+
+app.post('/nps', function (req, res, next) {
+  res.status(200);
+  res.json({ success: true });
+  process_nps(req.body.session_id, req.body.nps);
+  console.log("(" + req.body.session_id + ") NPS submitted" + " --> " + req.body.nps);
 });
 
 app.post('/initial_sentiment', function (req, res, next) {

@@ -4,6 +4,10 @@
   display: none;
 }
 
+.not-displayed {
+  visibility: hidden;
+}
+
 .survey-table {
   width: 100%;
   table-layout: fixed;
@@ -61,10 +65,22 @@ i.fa {
   width: 40%;
 }
 
+.complete-button {
+  width:30px;
+}
+
 .close-button {
   position: fixed;
   right: 0;
   top: 10;
+  width: 30px;
+}
+
+.remind-me-later-button {
+  position: fixed;
+  right: 0;
+  top: 10;
+  width: 160px;
 }
 
 /*bounce up animation for the subject*/
@@ -192,7 +208,6 @@ i.fa {
 
 .subject .content {
   margin-bottom: 8px;
-  overflow: scroll;
 }
 
 .subject .survey_reaction {
@@ -204,7 +219,7 @@ i.fa {
 
 .subject .survey_reaction:hover,
 .subject .survey_reaction:active {
-  background: #222;
+  background: #eee;
   color: #fff;
 }
 /*media queries for small devices*/

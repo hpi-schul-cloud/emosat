@@ -94,6 +94,20 @@ function add_survey_question(type, answers, question_id) {
   table.append(new_answer);
 }
 
+function publish_nps(nps) {
+  $.ajax({
+    url: server_prefix + "/nps",
+    type: "POST",
+    data: JSON.stringify({ "session_id": survey_options.session_id, "nps": nps }),
+    contentType: "application/json; charset=utf-8",
+    processData: false,
+    dataType: "json",
+    success: function () {
+      console.log("Successfully sent NPS to server");
+    }
+  });
+}
+
 function publish_initial_sentiment(positive_sentiment) {
   $.ajax({
     url: server_prefix + "/initial_sentiment",
@@ -139,15 +153,39 @@ function fill_survey_partial(answer_source, count, offset) {
 }
 
 function proceed_survey() {
-  resize_survey_content(97, 50);
-  content_stage_2();
+  $(".complete-button").removeClass("not-displayed");
+  if (survey_options.request_nps == true) {
+    content_state_nps();
+  }
+  else {
+    content_stage_2();
+  }
 }
 
 function resize_survey_content(width, height) {
   $("#question_content").css({ "width": width + "%", "height": height + "%" });
 }
 
+function content_state_nps() {
+  $(".content").html(nps_html_content());
+  $(".survey-footer").html(nps_html_footer());
+
+  $("#nps-submit-button").click(function() {
+    var nps_value = $("input[name='nps']:checked").attr("answer");
+    if (nps_value !== undefined) {
+      publish_nps(parseInt(nps_value, 10));
+      survey_options.request_nps = false;
+      content_stage_2();
+    }
+    else {
+      alert("Please select a value first");
+    }
+  });
+}
+
 function content_stage_2() {
+  resize_survey_content(97, 50);
+  $(".content").html(survey_body_html_content());
   $(".surveytool-title").text("Please help us improve by rating us according to the following criteria.");
   var question_series_id = 2;
   $.getJSON(server_prefix + "/questions/" + question_series_id + "/?" + get_sid_url_string() + get_role_url_string(), function (data) {
@@ -194,9 +232,12 @@ function determine_survey_need() {
 
 function init_survey(options) {
   survey_options = options;
+  survey_options.welcome_question = survey_options.welcome_question || "How is your learning journey so far?";
   console.log("Init of survey tool for div " + options.div_name);
 
   $("#" + options.div_name).html(survey_html_content());
+  $(".content").html(pre_survey_html_content());
+  $("#welcome-question").text(survey_options.welcome_question);
   server_prefix = options.server_prefix || "";
 
   if (survey_options.session_id) {
@@ -227,6 +268,80 @@ function init_survey(options) {
 
 }
 
+function nps_html_content() {
+  return `
+  <h3>Could you please rate that on a scale from 0 (bad) to 10 (very good)?</h3>
+  <center>
+  <tr class="survey-nps">
+    <td><span class="word-left">0</span></td>
+    <td><input answer="0" type="radio" name="nps"></td>
+    <td><input answer="1" type="radio" name="nps"></td>
+    <td><input answer="2" type="radio" name="nps"></td>
+    <td><input answer="3" type="radio" name="nps"></td>
+    <td><input answer="4" type="radio" name="nps"></td>
+    <td><input answer="5" type="radio" name="nps"></td>
+    <td><input answer="6" type="radio" name="nps"></td>
+    <td><input answer="7" type="radio" name="nps"></td>
+    <td><input answer="8" type="radio" name="nps"></td>
+    <td><input answer="9" type="radio" name="nps"></td>
+    <td><input answer="10" type="radio" name="nps"></td>
+    <td><span class="word-right">10</span></td>
+  </tr>
+  </center>
+  `
+}
+
+function nps_html_footer() {
+  return `
+    <button id="nps-submit-button">Submit</button>
+  `
+}
+
+function pre_survey_html_content() {
+  return `
+  <h3 class="surveytool-title">
+    <span id="welcome-question"> I'm the question.</span>
+    <div class="survey_reaction negative">👎</div>
+    <div class="survey_reaction positive">👍</div>
+  </h3>
+  `
+}
+
+function survey_body_html_content() {
+  return `
+  <div id="survey_area" class="hidden">
+    <table class="survey-table">
+      <tr class="survey-tr-header survey-tr-header-prototype hidden">
+        <td colspan="7"><span class="survey-question">That's the Question</span></td>
+      </tr>
+      <tr class="survey-tr-header survey-tr-header-7-prototype hidden">
+        <td colspan="9"><span class="survey-question">That's the Question</span></td>
+      </tr>
+      <tr class="survey-tr-prototype hidden">
+        <td><span class="word-left">left</span></td>
+        <td><input answer="1" type="radio"></td>
+        <td><input answer="2" type="radio"></td>
+        <td><input answer="3" type="radio"></td>
+        <td><input answer="4" type="radio"></td>
+        <td><input answer="5" type="radio"></td>
+        <td><span class="word-right">right</span></td>
+      </tr>
+      <tr class="survey-likert-7-tr-prototype hidden">
+        <td><span class="word-left">left</span></td>
+        <td><input answer="1" type="radio"></td>
+        <td><input answer="2" type="radio"></td>
+        <td><input answer="3" type="radio"></td>
+        <td><input answer="4" type="radio"></td>
+        <td><input answer="5" type="radio"></td>
+        <td><input answer="6" type="radio"></td>
+        <td><input answer="7" type="radio"></td>
+        <td><span class="word-right">right</span></td>
+      </tr>
+    </table>
+  </div>
+  `
+}
+
 function survey_html_content() {
   return `
   <div class="surveytool-container cf">
@@ -237,44 +352,18 @@ function survey_html_content() {
       <div class="close-button">
         <i class="fa fa-times"></i>
       </div>
-      <div class="complete-button">
+      <div class="remind-me-later-button">
+        Remind me later
+      </div>
+      <div class="complete-button not-displayed">
         <i class="fa fa-check-circle"></i>
       </div>
-      <h3 class="surveytool-title">How is your learning journey so far?
-        <div class="survey_reaction negative">👎</div>
-        <div class="survey_reaction positive">👍</div>
-      </h3>
+      
       <div class="content">
-        <div id="survey_area" class="hidden">
-          <table class="survey-table">
-            <tr class="survey-tr-header survey-tr-header-prototype hidden">
-              <td colspan="7"><span class="survey-question">That's the Question</span></td>
-            </tr>
-            <tr class="survey-tr-header survey-tr-header-7-prototype hidden">
-              <td colspan="9"><span class="survey-question">That's the Question</span></td>
-            </tr>
-            <tr class="survey-tr-prototype hidden">
-              <td><span class="word-left">left</span></td>
-              <td><input answer="1" type="radio"></td>
-              <td><input answer="2" type="radio"></td>
-              <td><input answer="3" type="radio"></td>
-              <td><input answer="4" type="radio"></td>
-              <td><input answer="5" type="radio"></td>
-              <td><span class="word-right">right</span></td>
-            </tr>
-            <tr class="survey-likert-7-tr-prototype hidden">
-              <td><span class="word-left">left</span></td>
-              <td><input answer="1" type="radio"></td>
-              <td><input answer="2" type="radio"></td>
-              <td><input answer="3" type="radio"></td>
-              <td><input answer="4" type="radio"></td>
-              <td><input answer="5" type="radio"></td>
-              <td><input answer="6" type="radio"></td>
-              <td><input answer="7" type="radio"></td>
-              <td><span class="word-right">right</span></td>
-            </tr>
-          </table>
-        </div>
+        
+      </div>
+      <div class="survey-footer">
+        
       </div>
 
     </div>
