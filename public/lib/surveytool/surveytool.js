@@ -154,6 +154,7 @@ function fill_survey_partial(answer_source, count, offset) {
 
 function proceed_survey() {
   $(".complete-button").removeClass("not-displayed");
+  $(".survey-footer").removeClass("hidden");
   if (survey_options.request_nps == true) {
     content_state_nps();
   }
@@ -162,12 +163,14 @@ function proceed_survey() {
   }
 }
 
-function resize_survey_content(width, height) {
-  $("#question_content").css({ "width": width + "%", "height": height + "%" });
+function resize_survey_content(width, height, absolute=false) {
+  var unit = absolute ? "px" : "%";
+  $("#question_content").css({ "width": width + unit, "height" : height + unit });
 }
 
 function content_state_nps() {
-  $(".content").html(nps_html_content());
+  $(".survey-content").addClass("footer-present");
+  $(".survey-content").html(nps_html_content());
   $(".survey-footer").html(nps_html_footer());
 
   $("#nps-submit-button").click(function() {
@@ -184,8 +187,20 @@ function content_state_nps() {
 }
 
 function content_stage_2() {
-  resize_survey_content(97, 50);
-  $(".content").html(survey_body_html_content());
+  resize_survey_content(97, 50, false);
+  $(".survey-content").html(survey_body_html_content());
+  $(".survey-footer").html(survey_html_footer());
+
+  $("#survey-submit-button").click(function() {
+    show_survey(false);
+    determine_survey_need();
+  });
+
+  $("#remind-me-later-button").click(function() {
+    show_survey(false);
+  });
+
+  $(".survey-header-text").text("Please help us improve by rating us according to the following criteria.")
   $(".surveytool-title").text("Please help us improve by rating us according to the following criteria.");
   var question_series_id = 2;
   $.getJSON(server_prefix + "/questions/" + question_series_id + "/?" + get_sid_url_string() + get_role_url_string(), function (data) {
@@ -236,7 +251,7 @@ function init_survey(options) {
   console.log("Init of survey tool for div " + options.div_name);
 
   $("#" + options.div_name).html(survey_html_content());
-  $(".content").html(pre_survey_html_content());
+  $(".survey-content").html(pre_survey_html_content());
   $("#welcome-question").text(survey_options.welcome_question);
   server_prefix = options.server_prefix || "";
 
@@ -293,7 +308,14 @@ function nps_html_content() {
 
 function nps_html_footer() {
   return `
-    <button id="nps-submit-button">Submit</button>
+    <button id="nps-submit-button" class="submit">Submit</button>
+  `
+}
+
+function survey_html_footer() {
+  return `
+    <button id="survey-submit-button" class="submit">Submit</button>
+    <button id="remind-me-later-button" class="remind-me-later">Remind me later</button>
   `
 }
 
@@ -347,22 +369,27 @@ function survey_html_content() {
   <div class="surveytool-container cf">
   <div id="question_content" class="animation-element bounce-up cf">
     <div class="subject survey">
-      <div class="header-color"></div>
-      <div class="icon"><i class="fa fa-poll-h"></i></div>
-      <div class="close-button">
-        <i class="fa fa-times"></i>
-      </div>
-      <div class="remind-me-later-button">
-        Remind me later
-      </div>
-      <div class="complete-button not-displayed">
-        <i class="fa fa-check-circle"></i>
+      <div class="header-color">
+        <div class="survey-header-text">
+        </div>
+
+        <div class="complete-button not-displayed">
+          <i class="fa fa-check-circle"></i>
+        </div>
+
+        <div class="close-button">
+          <i class="far fa-window-close"></i>
+        </div>
+
+        
+      
       </div>
       
-      <div class="content">
+      
+      <div class="survey-content">
         
       </div>
-      <div class="survey-footer">
+      <div class="survey-footer hidden">
         
       </div>
 
