@@ -181,7 +181,6 @@ function fill_survey_partial(answer_source, count, offset) {
 }
 
 function proceed_survey() {
-  $(".complete-button").removeClass("not-displayed");
   $(".survey-footer").removeClass("hidden");
   if (survey_options.request_nps == true) {
     content_state_nps();
@@ -320,14 +319,6 @@ function init_survey(options) {
   $(".close-button").click(function () {
     show_survey(false);
     opt_out();
-  })
-
-  $(".complete-button").click(function () {
-    show_survey(false);
-    setTimeout(function() {
-      proceed_survey();
-      show_survey(true);
-    }, 1000)
   })
 
   $(".survey_reaction").click(function () {
