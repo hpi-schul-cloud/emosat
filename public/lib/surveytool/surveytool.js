@@ -108,6 +108,34 @@ function publish_nps(nps) {
   });
 }
 
+function publish_statistical_data(gender_id, age_group_id) {
+  $.ajax({
+    url: server_prefix + "/statistics",
+    type: "POST",
+    data: JSON.stringify({ "session_id": survey_options.session_id, "gender": gender_id, "age_group": age_group_id }),
+    contentType: "application/json; charset=utf-8",
+    processData: false,
+    dataType: "json",
+    success: function () {
+      console.log("Successfully sent statistical data to server");
+    }
+  });
+}
+
+function publish_comment(comment) {
+  $.ajax({
+    url: server_prefix + "/comment",
+    type: "POST",
+    data: JSON.stringify({ "session_id": survey_options.session_id, "comment": comment }),
+    contentType: "application/json; charset=utf-8",
+    processData: false,
+    dataType: "json",
+    success: function () {
+      console.log("Successfully sent comment to server");
+    }
+  });
+}
+
 function publish_initial_sentiment(positive_sentiment) {
   $.ajax({
     url: server_prefix + "/initial_sentiment",
@@ -168,6 +196,31 @@ function resize_survey_content(width, height, absolute=false) {
   $("#question_content").css({ "width": width + unit, "height" : height + unit });
 }
 
+function content_stage_statistics() {
+  resize_survey_content(50, 50, false);
+  $(".survey-content").html(statistics_html_content());
+  $(".survey-footer").html(statistics_html_footer());
+  $(".survey-header-text").text("Thank you!")
+
+  $("#no-personal-data-button").click(function() {
+    show_survey(false);
+  });
+
+  $("#statistics-submit-button").click(function() {
+    var age_group_id = $("input[name='age']:checked").attr("answer");
+    var gender_id = $("input[name='gender']:checked").attr("answer");
+
+    publish_statistical_data(parseInt(gender_id, 10), parseInt(age_group_id, 10));
+
+    var comment = $("#comment").val();
+    publish_comment(comment);
+
+    show_survey(false);
+  })
+
+  show_survey(true);
+}
+
 function content_state_nps() {
   $(".survey-content").addClass("footer-present");
   $(".survey-content").html(nps_html_content());
@@ -193,7 +246,8 @@ function content_stage_2() {
 
   $("#survey-submit-button").click(function() {
     show_survey(false);
-    determine_survey_need();
+    content_stage_statistics();
+    //determine_survey_need();
   });
 
   $("#remind-me-later-button").click(function() {
@@ -303,6 +357,33 @@ function nps_html_content() {
     <td><span class="word-right">10</span></td>
   </tr>
   </center>
+}
+
+function statistics_html_content() {
+  return `
+  Thank you for helping us! In order to understand your answer even, we'd like to know a little bit more about yourself.
+  <h3>Gender</h3>
+  <table class="survey-table">
+    <tr>
+      <td> female <input answer="0" type="radio" name="gender"></td>
+      <td> male <input answer="1" type="radio" name="gender"></td>
+      <td> other <input answer="2" type="radio" name="gender"></td>
+      <td> I prefer not to answer <input answer="2" type="radio" name="gender"></td>
+    </tr>
+  </table>
+  <h3>Age</h3>
+  <table class="survey-table">
+    <tr>
+      <td>18-24 <input answer="0" type="radio" name="age"></td>
+      <td>25-34 <input answer="1" type="radio" name="age"></td>
+      <td>35-44 <input answer="2" type="radio" name="age"></td>
+      <td>45-54 <input answer="3" type="radio" name="age"></td>
+      <td>55-64 <input answer="4" type="radio" name="age"></td>
+      <td>65+ <input answer="5" type="radio" name="age"></td>
+    </tr>
+  </table>
+
+  <input type="text" id="comment"></input>
   `
 }
 
@@ -316,6 +397,13 @@ function survey_html_footer() {
   return `
     <button id="survey-submit-button" class="submit">Submit</button>
     <button id="remind-me-later-button" class="remind-me-later">Remind me later</button>
+  `
+}
+
+function statistics_html_footer() {
+  return `
+    <button id="statistics-submit-button" class="submit">Submit</button>
+    <button id="no-personal-data-button" class="remind-me-later">I prefer not to answer</button>
   `
 }
 
