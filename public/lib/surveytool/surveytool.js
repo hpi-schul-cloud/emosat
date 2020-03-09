@@ -339,24 +339,25 @@ function init_survey(options) {
 
 function nps_html_content() {
   return `
-  <h3>Could you please rate that on a scale from 0 (bad) to 10 (very good)?</h3>
-  <center>
-  <tr class="survey-nps">
-    <td><span class="word-left">0</span></td>
-    <td><input answer="0" type="radio" name="nps"></td>
-    <td><input answer="1" type="radio" name="nps"></td>
-    <td><input answer="2" type="radio" name="nps"></td>
-    <td><input answer="3" type="radio" name="nps"></td>
-    <td><input answer="4" type="radio" name="nps"></td>
-    <td><input answer="5" type="radio" name="nps"></td>
-    <td><input answer="6" type="radio" name="nps"></td>
-    <td><input answer="7" type="radio" name="nps"></td>
-    <td><input answer="8" type="radio" name="nps"></td>
-    <td><input answer="9" type="radio" name="nps"></td>
-    <td><input answer="10" type="radio" name="nps"></td>
-    <td><span class="word-right">10</span></td>
-  </tr>
-  </center>
+  <h3>How likely is it that you would recommend <span id="brand-name">[brand]</span> to a friend or colleague?</h3>
+  <table class="survey-table">
+    <tr class="survey-nps">
+      <td><span class="word-left">0</span></td>
+      <td><input answer="0" type="radio" name="nps"></td>
+      <td><input answer="1" type="radio" name="nps"></td>
+      <td><input answer="2" type="radio" name="nps"></td>
+      <td><input answer="3" type="radio" name="nps"></td>
+      <td><input answer="4" type="radio" name="nps"></td>
+      <td><input answer="5" type="radio" name="nps"></td>
+      <td><input answer="6" type="radio" name="nps"></td>
+      <td><input answer="7" type="radio" name="nps"></td>
+      <td><input answer="8" type="radio" name="nps"></td>
+      <td><input answer="9" type="radio" name="nps"></td>
+      <td><input answer="10" type="radio" name="nps"></td>
+      <td><span class="word-right">10</span></td>
+    </tr>
+  </table>
+  `
 }
 
 function statistics_html_content() {
