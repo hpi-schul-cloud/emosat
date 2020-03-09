@@ -43,9 +43,10 @@ function table_exists(table) {
   return (stmt.all(table).length > 0) == true;
 }
 
-function create_survey(name, title) {
-  var survey_stmt = db.prepare("INSERT INTO survey (name, title) VALUES (?, ?)");
-  survey_stmt.run(name, title);
+function create_survey(name, title, friendly_title) {
+  friendly_title = friendly_title ? friendly_title : title;
+  var survey_stmt = db.prepare("INSERT INTO survey (name, title, friendly_title) VALUES (?, ?, ?)");
+  survey_stmt.run(name, title, friendly_title);
 
   var stmt = db.prepare("SELECT max(ID) as id FROM survey");
   var result = stmt.get();
@@ -202,7 +203,7 @@ function bootstrap_questions() {
     var available_languages = Object.keys(entry)
     for (var language_index in available_languages) {
       var language = available_languages[language_index];
-      var survey_id = create_survey(survey_template_name, entry[language].title);
+      var survey_id = create_survey(survey_template_name, entry[language].title, entry[language].friendly_title);
       console.log("Survey \"" + entry[language].title + "\" created with ID " + survey_id);
       var question_parameters = {}
       if (entry[language].type == "two_type_7" || entry[language].type == "two_type_5") {
@@ -286,7 +287,7 @@ function init_survey() {
   if (!table_exists("survey")) {
     db.prepare("CREATE TABLE IF NOT EXISTS series (id INTEGER PRIMARY KEY, name TEXT)").run();
     db.prepare("CREATE TABLE IF NOT EXISTS survey_series (id INTEGER PRIMARY KEY, survey_id INTEGER, series_id INTEGER, position INTEGER)").run();
-    db.prepare("CREATE TABLE IF NOT EXISTS survey (id INTEGER PRIMARY KEY, name TEXT, title TEXT)").run();
+    db.prepare("CREATE TABLE IF NOT EXISTS survey (id INTEGER PRIMARY KEY, name TEXT, title TEXT, friendly_title TEXT)").run();
     db.prepare("CREATE TABLE IF NOT EXISTS survey_question (id INTEGER PRIMARY KEY, survey_id INTEGER, question_id INTEGER, position INTEGER)").run();
   }
 }
@@ -407,17 +408,17 @@ function get_answers_for_question(question_id) {
 }
 
 function get_survey_by_name(survey_name) {
-  var stmt = db.prepare("SELECT id, title FROM survey where name = ?");
+  var stmt = db.prepare("SELECT id, title, friendly_title FROM survey where name = ?");
   return stmt.all(survey_name);
 }
 
 function get_survey(survey_id) {
-  var stmt = db.prepare("SELECT id, title FROM survey where id = ?");
+  var stmt = db.prepare("SELECT id, title, friendly_title FROM survey where id = ?");
   return stmt.all(survey_id);
 }
 
 function get_surveys(limit, offset) {
-  var stmt = db.prepare("SELECT survey.id as id, survey.title as title, survey.name as name, count(1) as question_count FROM survey, survey_question where survey.id = survey_question.survey_id group by survey.id, survey.title, survey.name");
+  var stmt = db.prepare("SELECT survey.id as id, survey.title as title, survey.friendly_title as friendly_title, survey.name as name, count(1) as question_count FROM survey, survey_question where survey.id = survey_question.survey_id group by survey.id, survey.title, survey.name");
   return stmt.all();
 }
 
@@ -435,6 +436,7 @@ function get_questions(survey_id, category_name, limit, offset) {
     if (survey_data.length > 0) {
       survey_name = survey_data[0].name;
       survey_title = survey_data[0].title;
+      survey_friendly_title = survey_data[0].friendly_title;
       survey_filter = " ANd survey_question.survey_id = ? AND survey_question.question_id = t1.id";
       survey_from = "survey_question, ";
       survey_order = "survey_question.position ASC, ";
@@ -509,6 +511,7 @@ function get_questions(survey_id, category_name, limit, offset) {
     success: true,
     questions: result,
     survey_title: survey_title,
+    survey_friendly_title: survey_friendly_title,
     survey_id: survey_id,
     error: "",
     status: 200

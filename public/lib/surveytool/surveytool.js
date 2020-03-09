@@ -258,7 +258,7 @@ function content_stage_2(question_series_id) {
   $.getJSON(server_prefix + "/questions/" + question_series_id + "/?" + get_sid_url_string() + get_role_url_string(), function (data) {
     if (data.success === true) {
       fill_survey(data.questions);
-      $(".survey-header-text").text(data.survey_title);
+      $(".survey-header-text").text(data.survey_friendly_title);
       show_survey_table(true);
     }
     else {

@@ -2,6 +2,7 @@ function word_pairs() {
 
   var ueq_en = {
     "type" : "two_type_7",
+    "friendly_title" : "Questionnaire",
     "title" : "UEQ (en)",
     "pairs": [
       ["annoying", "enjoyable"],
@@ -35,6 +36,7 @@ function word_pairs() {
 
   var ueq_de = {
     "type" : "two_type_7",
+    "friendly_title" : "Fragebogen",
     "title" : "UEQ (de)",
     "pairs": [
       ["unerfreulich", "erfreulich"],
@@ -68,6 +70,7 @@ function word_pairs() {
 
   var meCUE_en = {
     "type" : "single_type_7",
+    "friendly_title" : "Questionnaire",
     "title" : "meCUE 2.0 (en)",
     "sentiments": [
       "The product is easy to use.",
@@ -90,6 +93,7 @@ function word_pairs() {
 
   var meCUE_de = {
     "type" : "single_type_7",
+    "friendly_title" : "Fragebogen",
     "title" : "meCUE 2.0 (de)",
     "sentiments": [
       "Das Produkt lässt sich einfach benutzen.",
@@ -112,6 +116,7 @@ function word_pairs() {
 
   var VisAWIs_en = {
     "type" : "single_type_7",
+    "friendly_title" : "Questionnaire",
     "title" : "VisAWI-S (en)",
     "sentiments": [
       "Everything goes together on this site.",
@@ -132,6 +137,7 @@ function word_pairs() {
 
   var VisAWIs_de = {
     "type" : "single_type_7",
+    "friendly_title" : "Fragebogen",
     "title" : "VisAWI-S (de)",
     "sentiments": [
       "Auf der Seite passt alles zusammen.",
