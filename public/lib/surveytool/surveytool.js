@@ -238,8 +238,8 @@ function content_state_nps() {
   });
 }
 
-  resize_survey_content(97, 50, false);
 function content_stage_2(question_series_id) {
+  resize_survey_content(90, 50, false);
   $(".survey-content").html(survey_body_html_content());
   $(".survey-footer").html(survey_html_footer());
 
@@ -253,12 +253,12 @@ function content_stage_2(question_series_id) {
     show_survey(false);
   });
 
-  $(".survey-header-text").text("Please help us improve by rating us according to the following criteria.")
-  $(".surveytool-title").text("Please help us improve by rating us according to the following criteria.");
-  var question_series_id = 2;
+  $(".survey-intro").text("Please help us improve by rating us according to the following criteria.");
+
   $.getJSON(server_prefix + "/questions/" + question_series_id + "/?" + get_sid_url_string() + get_role_url_string(), function (data) {
     if (data.success === true) {
       fill_survey(data.questions);
+      $(".survey-header-text").text(data.survey_title);
       show_survey_table(true);
     }
     else {
@@ -277,7 +277,7 @@ function get_sid_url_string() {
 }
 
 function get_role_url_string() {
-  return survey_options.role ? "&role=" + survey_options.role : "";
+  return survey_options.user_role ? "&role=" + survey_options.user_role : "";
 }
 
 function determine_survey_need() {
@@ -421,6 +421,7 @@ function pre_survey_html_content() {
 function survey_body_html_content() {
   return `
   <div id="survey_area" class="hidden">
+    <div class="survey-intro">I am the intro.</div>
     <table class="survey-table">
       <tr class="survey-tr-header survey-tr-header-prototype hidden">
         <td colspan="7"><span class="survey-question">That's the Question</span></td>
@@ -459,28 +460,15 @@ function survey_html_content() {
   <div id="question_content" class="animation-element bounce-up cf">
     <div class="subject survey">
       <div class="header-color">
-        <div class="survey-header-text">
-        </div>
-
-        <div class="complete-button not-displayed">
-          <i class="fa fa-check-circle"></i>
-        </div>
-
+        <div class="survey-header-text"></div>
         <div class="close-button">
           <i class="far fa-window-close"></i>
         </div>
+      </div>
 
-        
-      
-      </div>
-      
-      
-      <div class="survey-content">
-        
-      </div>
-      <div class="survey-footer hidden">
-        
-      </div>
+      <div class="survey-content"></div>
+
+      <div class="survey-footer hidden"></div>
 
     </div>
   </div>
