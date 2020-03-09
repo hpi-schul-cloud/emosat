@@ -26,6 +26,8 @@ const port = (options.port != undefined) ? options.port : 3000;
 
 function init_database() {
   db.prepare("CREATE TABLE IF NOT EXISTS opt_out (timestamp INTEGER, session_id INTEGER)").run();
+  db.prepare("CREATE TABLE IF NOT EXISTS statistical_data (timestamp INTEGER, session_id INTEGER, gender INTEGER, age_group INTEGER)").run();
+  db.prepare("CREATE TABLE IF NOT EXISTS comment (timestamp INTEGER, session_id INTEGER, comment TEXT)").run();
   db.prepare("CREATE TABLE IF NOT EXISTS nps (timestamp INTEGER, session_id INTEGER, sentiment INTEGER)").run();
   db.prepare("CREATE TABLE IF NOT EXISTS sentiment (timestamp INTEGER, session_id INTEGER, sentiment TEXT)").run();
   db.prepare("CREATE TABLE IF NOT EXISTS response (timestamp INTEGER, session_id INTEGER, question_id INTEGER, value INTEGER)").run();
@@ -327,6 +329,25 @@ function process_nps(external_session_id, nps) {
     nps);
 }
 
+function process_statistical_data(external_session_id, gender_id, age_group_id) {
+  var stmt = db.prepare("INSERT INTO statistical_data VALUES (?, ?, ?, ?)");
+  var session_id = find_session_by_external_id(external_session_id, true);
+  stmt.run(
+    + new Date(),
+    session_id,
+    gender_id,
+    age_group_id);
+}
+
+function process_comment(external_session_id, comment) {
+  var stmt = db.prepare("INSERT INTO comment VALUES (?, ?, ?)");
+  var session_id = find_session_by_external_id(external_session_id, true);
+  stmt.run(
+    + new Date(),
+    session_id,
+    comment);
+}
+
 function process_initial_sentiment(external_session_id, sentiment) {
   var stmt = db.prepare("INSERT INTO sentiment VALUES (?, ?, ?)");
   var session_id = find_session_by_external_id(external_session_id, true);
@@ -547,6 +568,7 @@ app.get('/should_present_survey', function (req, res) {
   res.status(200);
   console.log("(" + req.query.sid + ") Asking whether to present survey");
   var session_id = find_session_by_external_id(req.query.sid, true);
+  var role = req.query.role || "unknown";
   var opt_out = has_opted_out(session_id);
   if (!opt_out) {
     var answered_surveys = get_answered_surveys(session_id);
@@ -575,6 +597,20 @@ app.post('/nps', function (req, res, next) {
   res.json({ success: true });
   process_nps(req.body.session_id, req.body.nps);
   console.log("(" + req.body.session_id + ") NPS submitted" + " --> " + req.body.nps);
+});
+
+app.post('/statistics', function (req, res, next) {
+  res.status(200);
+  res.json({ success: true });
+  process_statistical_data(req.body.session_id, req.body.gender, req.body.age_group);
+  console.log("(" + req.body.session_id + ") Statistical data submitted" + " --> " + req.body.gender + ", " + req.body.age_group);
+});
+
+app.post('/comment', function (req, res, next) {
+  res.status(200);
+  res.json({ success: true });
+  process_comment(req.body.session_id, req.body.comment);
+  console.log("(" + req.body.session_id + ") Comment submitted" + " --> " + req.body.comment);
 });
 
 app.post('/initial_sentiment', function (req, res, next) {
