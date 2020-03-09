@@ -307,6 +307,11 @@ function init_survey(options) {
   $("#" + options.div_name).html(survey_html_content());
   $(".survey-content").html(pre_survey_html_content());
   $("#welcome-question").text(survey_options.welcome_question);
+
+  if (survey_options.header_color) {
+    $(".header-color").css("background", survey_options.header_color);
+  }
+
   $(".survey_reaction.negative").text(survey_options.icon_negative || "👎");
   $(".survey_reaction.positive").text(survey_options.icon_positive || "👍");
 
