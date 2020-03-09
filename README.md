@@ -68,7 +68,7 @@ There are currently four different questions types available: `single_type_5` (A
 Each question can be tagged with categories, which can later be used for evaluation. The backend also allows to retrieve all questions of a certain category.
 
 ## Endpoints for evaluation
-`/results/answers/json` and `/results/answers/csv` resturn the answers for the individual questions as JSON and respectively CSV. Same applies for `/results/sentiments/json` and `/results/sentiments/csv`, which contain the initial user sentiment.
+`/results/answers/json` and `/results/answers/csv` resturn the answers for the individual questions as JSON and respectively CSV. Same applies for `/results/sentiments/json` and `/results/sentiments/csv`, which contain the initial user sentiment. NPS values are available from `/results/nps/csv` and `/results/nps/json`.
 
 There might be several answers for a single questions and a single session ID, as the data is immediately transferred to the backend. If only the final result is of interes, all others can be ignored. This can be facilitated by using the `single_answer=true` URL parameter.
 

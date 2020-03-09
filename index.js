@@ -658,6 +658,14 @@ function get_answered_surveys(session_id) {
   return stmt.all(session_id);
 }
 
+function get_nps(session_id) {
+  //var session_id = find_session_by_external_id(external_session_id, false);
+  var stmt = session_id !== undefined ?
+    db.prepare("SELECT timestamp, session_id, sentiment FROM nps WHERE session_id = ?") :
+    db.prepare("SELECT timestamp, session_id, sentiment FROM nps");
+  return session_id !== undefined ? stmt.all(session_id) : stmt.all();
+}
+
 function get_sentiments(session_id) {
   //var session_id = find_session_by_external_id(external_session_id, false);
   var stmt = session_id !== undefined ?
@@ -697,6 +705,25 @@ app.get('/results/sentiments/:format', function (req, res) {
   else if (format == "csv") {
     var data = json2csv(sentiments, { fields: sentiment_fields })
     res.attachment('sentiments.csv');
+    res.status(200).send(data);
+  }
+  else {
+    res.status(404);
+    res.json({ "error": "Type not supported." });
+  }
+});
+
+app.get('/results/nps/:format', function (req, res) {
+  var format = req.params.format;
+  var sid = req.query.sid || undefined;
+  var nps = get_nps(sid)
+  if (format == "json") {
+    res.status(200);
+    res.json({ "nps": nps });
+  }
+  else if (format == "csv") {
+    var data = json2csv(nps, { fields: sentiment_fields })
+    res.attachment('nps.csv');
     res.status(200).send(data);
   }
   else {
