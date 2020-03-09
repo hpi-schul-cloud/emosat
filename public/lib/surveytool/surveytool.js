@@ -429,24 +429,24 @@ function survey_body_html_content() {
         <td colspan="9"><span class="survey-question">That's the Question</span></td>
       </tr>
       <tr class="survey-tr-prototype hidden">
-        <td><span class="word-left">left</span></td>
-        <td><input answer="1" type="radio"></td>
-        <td><input answer="2" type="radio"></td>
-        <td><input answer="3" type="radio"></td>
-        <td><input answer="4" type="radio"></td>
-        <td><input answer="5" type="radio"></td>
-        <td><span class="word-right">right</span></td>
+        <td class="word-column"><span class="word-left">left</span></td>
+        <td class="selection-column"><input answer="1" type="radio"></td>
+        <td class="selection-column"><input answer="2" type="radio"></td>
+        <td class="selection-column"><input answer="3" type="radio"></td>
+        <td class="selection-column"><input answer="4" type="radio"></td>
+        <td class="selection-column"><input answer="5" type="radio"></td>
+        <td class="word-column"><span class="word-right">right</span></td>
       </tr>
       <tr class="survey-likert-7-tr-prototype hidden">
-        <td><span class="word-left">left</span></td>
-        <td><input answer="1" type="radio"></td>
-        <td><input answer="2" type="radio"></td>
-        <td><input answer="3" type="radio"></td>
-        <td><input answer="4" type="radio"></td>
-        <td><input answer="5" type="radio"></td>
-        <td><input answer="6" type="radio"></td>
-        <td><input answer="7" type="radio"></td>
-        <td><span class="word-right">right</span></td>
+        <td class="word-column"><span class="word-left">left</span></td>
+        <td class="selection-column"><input answer="1" type="radio"></td>
+        <td class="selection-column"><input answer="2" type="radio"></td>
+        <td class="selection-column"><input answer="3" type="radio"></td>
+        <td class="selection-column"><input answer="4" type="radio"></td>
+        <td class="selection-column"><input answer="5" type="radio"></td>
+        <td class="selection-column"><input answer="6" type="radio"></td>
+        <td class="selection-column"><input answer="7" type="radio"></td>
+        <td class="word-column"><span class="word-right">right</span></td>
       </tr>
     </table>
   </div>
