@@ -230,7 +230,7 @@ function bootstrap_questions() {
   add_survey_to_series(en_series_id, 3);
   add_survey_to_series(en_series_id, 5);
   var de_series_id = create_series("German Series");
-  add_survey_to_series(en_series_id, 8);
+  add_survey_to_series(de_series_id, 8);
   add_survey_to_series(de_series_id, 4);
   add_survey_to_series(de_series_id, 6);
 }
