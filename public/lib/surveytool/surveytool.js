@@ -186,7 +186,7 @@ function proceed_survey() {
     content_state_nps();
   }
   else {
-    content_stage_2();
+    content_stage_2(survey_options.question_series);
   }
 }
 
@@ -230,7 +230,7 @@ function content_state_nps() {
     if (nps_value !== undefined) {
       publish_nps(parseInt(nps_value, 10));
       survey_options.request_nps = false;
-      content_stage_2();
+      content_stage_2(survey_options.question_series);
     }
     else {
       alert("Please select a value first");
@@ -238,8 +238,8 @@ function content_state_nps() {
   });
 }
 
-function content_stage_2() {
   resize_survey_content(97, 50, false);
+function content_stage_2(question_series_id) {
   $(".survey-content").html(survey_body_html_content());
   $(".survey-footer").html(survey_html_footer());
 
@@ -303,6 +303,7 @@ function init_survey(options) {
   survey_options.welcome_question = survey_options.welcome_question || "How is your learning journey so far?";
   console.log("Init of survey tool for div " + options.div_name);
 
+  survey_options.question_series = survey_options.question_series || 1;
   $("#" + options.div_name).html(survey_html_content());
   $(".survey-content").html(pre_survey_html_content());
   $("#welcome-question").text(survey_options.welcome_question);

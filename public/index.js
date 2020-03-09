@@ -4,5 +4,7 @@ $(function () {
     init_survey({
         div_name: "my_survey_div", 
         user_role : "student",
-        request_nps : true});
+        request_nps : true, 
+        question_series : 2
+    });
 });
