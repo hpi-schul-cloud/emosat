@@ -2,6 +2,7 @@ const express = require('express')
 const questions = require('./questions').word_pairs;
 
 const json2csv = require('json2csv').parse;
+const shuffle = require('shuffle-array');
 const answer_fields = ['timestamp', 'session_id', 'question_id', 'value'];
 const sentiment_fields = ['timestamp', 'session_id', 'sentiment'];
 
@@ -494,7 +495,7 @@ function get_questions(survey_id, category_name, limit, offset) {
 
 }
 
-function select_next_survey(session_id, series_id) {
+function select_next_survey(session_id, series_id, shuffle_order=false) {
   // Either return the ID of the next survey to take or -1
   // if nothing could be selected
 
@@ -506,7 +507,7 @@ function select_next_survey(session_id, series_id) {
   console.log("Answered surveys: ", answered_survey_ids)
 
   var series_data = get_series(series_id);
-
+  if (shuffle_order) shuffle(series_data.surveys);
   console.log(series_data);
   for (var survey_index in series_data.surveys) {
     if (!answered_survey_ids.includes(series_data.surveys[survey_index])) {
@@ -529,7 +530,7 @@ app.get('/questions/:series', function (req, res) {
     return;
   }
 
-  var next_survey_id = select_next_survey(session_id, series_id);
+  var next_survey_id = select_next_survey(session_id, series_id, true);
   console.log("Next survey: ", next_survey_id);
   if (next_survey_id > 0) {
     var data = get_questions(next_survey_id, undefined, 0, 0);
